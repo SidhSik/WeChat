@@ -1440,6 +1440,7 @@ templateView = Backbone.View.extend({
     "click .template_selected": "selectTemplate",
     "click #edit_existing": "editExistingTemplate",
     "click .wechatSingleTemplate .templateContainer": "previewSingleImageTemplate",
+    "click .wechatTemplateMessage .templateContainer": "previewWeChatTemplateMessages",
     "click .wechatMultiTemplate  .templateContainer": "previewMultiImageTemplate"
   },
   initialize: function() {},
@@ -1459,13 +1460,25 @@ templateView = Backbone.View.extend({
     this.$el.children('#nav_div_3').html(main_template);
     this.$el.find('#content_div_3').html(_.template($('#wechat_templates_collection_tpl').html()));
     var templateListHtml = '',
+      weChatTemplateMessagesListHtml = '',
       templateMultiListHtml = '';
     var templates = this.model.get('templates');
     var singlePicTemplates = templates["single"],
+      weChatTemplateMessages = templates["template_messages"],
       multiPicTemplates = templates["multi"];
     _.each(singlePicTemplates, function(template) {
       templateListHtml += _.template($('#wechat_single_tpl').html())({
         model: template
+      });
+    });
+    _.each(weChatTemplateMessages, function(template) {
+      var str = template.content;
+      str = str.replace(/(?:\r\n|\r|\n)/g, '<br />');
+      str = str.replace(/{{/g, '');
+      str = str.replace(/}}/g, '');
+      weChatTemplateMessagesListHtml += _.template($('#wechat_template_messgage_tpl').html())({
+        model: template,
+        data_content: str
       });
     });
     _.each(multiPicTemplates, function(template) {
@@ -1475,6 +1488,7 @@ templateView = Backbone.View.extend({
     });
     this.$el.find('.ca_all_container_body').find('.ca_spic_container_body').html(templateListHtml);
     this.$el.find('.ca_all_container_body').find('.ca_mpic_container_body').html(templateMultiListHtml);
+    this.$el.find('.ca_all_container_body').find('.ca_template_messages_container_body').html(weChatTemplateMessagesListHtml);
     if ($("#msg_template_type").val()) {
       $('#template_scope').val($("#msg_template_type").val()).trigger('change')
     }
@@ -1495,6 +1509,9 @@ templateView = Backbone.View.extend({
     $('.wechat-msg-content-container .close').on('click', function() {
       $(this).parent('.wechat-msg-content-container').addClass('hide');
     });
+  },
+  previewWeChatTemplateMessages: function(e) {
+    
   },
   previewSingleImageTemplate: function(e) {
     $('#single_image_preview_modal').remove();
@@ -1526,32 +1543,44 @@ templateView = Backbone.View.extend({
   selectTemplate: function(e) {
     this.model.checkSessionExpire();
     this.model.addWait();
-    if ($("#msg_template_type").val() == "WECHAT_SINGLE_TEMPLATE") {
-      this.model.setCache('selectedTemplate', $(e.currentTarget).parents('.wechatSingleTemplate').attr('template-id'));
-      this.model.setCache('qxuntemplateid', $(e.currentTarget).parents('.wechatSingleTemplate').attr('qxun-template-id'));
-      if ($(e.currentTarget).attr("type") != $("#msg_template_type").val()) {
-        $("#msg_template_type").val($(e.currentTarget).attr("type"));
-      }
-      $('#template_selected').val($(e.currentTarget).parents('.wechatSingleTemplate').attr('template-id')).attr({
-        'qxun-template-id': $(e.currentTarget).parents('.wechatSingleTemplate').attr('qxun-template-id')
-      });
+    switch($("#msg_template_type").val()){
+      case "WECHAT_SINGLE_TEMPLATE":
+        this.model.setCache('selectedTemplate', $(e.currentTarget).parents('.wechatSingleTemplate').attr('template-id'));
+        this.model.setCache('qxuntemplateid', $(e.currentTarget).parents('.wechatSingleTemplate').attr('qxun-template-id'));
+        if ($(e.currentTarget).attr("type") != $("#msg_template_type").val()) {
+          $("#msg_template_type").val($(e.currentTarget).attr("type"));
+        }
+        $('#template_selected').val($(e.currentTarget).parents('.wechatSingleTemplate').attr('template-id')).attr({
+          'qxun-template-id': $(e.currentTarget).parents('.wechatSingleTemplate').attr('qxun-template-id')
+        });
+        break;
+      case "WECHAT_TEMPLATE":
+        this.model.setCache('selectedTemplate', $(e.currentTarget).parents('.wechatTemplateMessage').attr('template-id'));
+        if ($(e.currentTarget).attr("type") != $("#msg_template_type").val()) {
+          $("#msg_template_type").val($(e.currentTarget).attr("type"));
+        }
+        $('#template_selected').val($(e.currentTarget).parents('.wechatTemplateMessage').attr('template-id')).attr({
+          'template-id': $(e.currentTarget).parents('.wechatTemplateMessage').attr('template-id')
+        });
+        break;
+      case "WECHAT_MULTI_TEMPLATE":
+        this.model.setCache('selectedTemplate', $(e.currentTarget).parents('.wechatMultiTemplate').attr('template-id'));
+        this.model.setCache('qxuntemplateid', $(e.currentTarget).parents('.wechatMultiTemplate').attr('qxun-template-id'));
+        if ($(e.currentTarget).attr("type") != $("#msg_template_type").val()) {
+          $("#msg_template_type").val($(e.currentTarget).attr("type"));
+        }
+        $('#template_selected').val($(e.currentTarget).parents('.wechatMultiTemplate').attr('template-id')).attr({
+          'qxun-template-id': $(e.currentTarget).parents('.wechatMultiTemplate').attr('qxun-template-id')
+        });
+        this.model.setCache('singleImageTemplateIds', $(e.currentTarget).parents('.wechatMultiTemplate').attr('single-image-template-id'));
+        this.model.setCache('articleid', $(e.currentTarget).parents('.wechatMultiTemplate').attr('article-id'));
+        $('#template_selected').attr({
+          'article-id': $(e.currentTarget).parents('.wechatMultiTemplate').attr('article-id'),
+          'single-image-template-id': $(e.currentTarget).parents('.wechatMultiTemplate').attr('single-image-template-id')
+        });
+        break;
     }
-    if ($("#msg_template_type").val() == "WECHAT_MULTI_TEMPLATE") {
-      this.model.setCache('selectedTemplate', $(e.currentTarget).parents('.wechatMultiTemplate').attr('template-id'));
-      this.model.setCache('qxuntemplateid', $(e.currentTarget).parents('.wechatMultiTemplate').attr('qxun-template-id'));
-      if ($(e.currentTarget).attr("type") != $("#msg_template_type").val()) {
-        $("#msg_template_type").val($(e.currentTarget).attr("type"));
-      }
-      $('#template_selected').val($(e.currentTarget).parents('.wechatMultiTemplate').attr('template-id')).attr({
-        'qxun-template-id': $(e.currentTarget).parents('.wechatMultiTemplate').attr('qxun-template-id')
-      });
-      this.model.setCache('singleImageTemplateIds', $(e.currentTarget).parents('.wechatMultiTemplate').attr('single-image-template-id'));
-      this.model.setCache('articleid', $(e.currentTarget).parents('.wechatMultiTemplate').attr('article-id'));
-      $('#template_selected').attr({
-        'article-id': $(e.currentTarget).parents('.wechatMultiTemplate').attr('article-id'),
-        'single-image-template-id': $(e.currentTarget).parents('.wechatMultiTemplate').attr('single-image-template-id')
-      });
-    }
+
     step4_view.renderFn(this.model);
     slidePage($(e.currentTarget));
     $('#container_3 #nav_div_3').hide();
@@ -1587,10 +1616,17 @@ templateView = Backbone.View.extend({
       case 'WECHAT_SINGLE_TEMPLATE':
         $('.ca_spic_container_body').removeClass('hide');
         $('.ca_mpic_container_body').addClass('hide');
+        $('.ca_template_messages_container_body').addClass('hide');
+        break;
+      case 'WECHAT_TEMPLATE':
+        $('.ca_template_messages_container_body').removeClass('hide');
+        $('.ca_spic_container_body').addClass('hide');
+        $('.ca_mpic_container_body').addClass('hide');
         break;
       case 'WECHAT_MULTI_TEMPLATE':
         $('.ca_mpic_container_body').removeClass('hide');
         $('.ca_spic_container_body').addClass('hide');
+        $('.ca_template_messages_container_body').addClass('hide');
         break;
     }
     $("#msg_template_type").val($(e.currentTarget).val());
@@ -1683,6 +1719,14 @@ editTempalteView = Backbone.View.extend({
           isPreview: true
         });
         this.$el.find('#content_div_4').html(_.template($('#wechat_multipic_tpl').html())({
+          model: templateData['0']
+        }));
+        break;
+      case 'WECHAT_TEMPLATE':
+        var templateData = _.where(this.model.get('templates').template_messages, {
+          template_id: this.model.getCache('selectedTemplate')
+        });
+        this.$el.find('#content_div_4').html(_.template($('#template_message_preview_template').html())({
           model: templateData['0']
         }));
         break;
