@@ -1511,7 +1511,21 @@ templateView = Backbone.View.extend({
     });
   },
   previewWeChatTemplateMessages: function(e) {
-    
+    $('.ca_template_messages_container_body').append(_.template($('#template_message_preview_template').html()));
+    $('#template_message_preview_modal').modal('show');
+    var template_id = $(e.currentTarget).parent('.wechatTemplateMessage').attr('template-id');
+    var currModel = _.findWhere(this.model.get('templates').template_messages,{
+      template_id: template_id
+    });
+    var html_content = currModel.content;
+    html_content = html_content.replace('{{first.DATA}}', 'first.DATA');
+    html_content = html_content.replace('{{remark.DATA}}', 'remark.DATA');
+    var obj = currModel.templates1[0].Data;
+    for (var propt in obj) {
+      html_content = html_content.replace(propt + '.DATA', obj[propt]['Value'].replace('{{', '').replace('}}', ''));
+    }
+    html_content = html_content.replace(/(?:\r\n|\r|\n)/g, '<br />');
+    this.$('#template_message_preview_modal .preview_container').html(html_content);
   },
   previewSingleImageTemplate: function(e) {
     $('#single_image_preview_modal').remove();
@@ -1726,7 +1740,7 @@ editTempalteView = Backbone.View.extend({
         var templateData = _.where(this.model.get('templates').template_messages, {
           template_id: this.model.getCache('selectedTemplate')
         });
-        this.$el.find('#content_div_4').html(_.template($('#template_message_preview_template').html())({
+        this.$el.find('#content_div_4').html(_.template($('#wechat_template_messgage_tpl').html())({
           model: templateData['0']
         }));
         break;
