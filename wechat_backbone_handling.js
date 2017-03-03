@@ -1740,9 +1740,46 @@ editTempalteView = Backbone.View.extend({
         var templateData = _.where(this.model.get('templates').template_messages, {
           template_id: this.model.getCache('selectedTemplate')
         });
-        this.$el.find('#content_div_4').html(_.template($('#wechat_template_messgage_tpl').html())({
-          model: templateData['0']
+        templateData = templateData['0'];
+        var str = templateData.content;
+        var result = str.split('{{');
+        var arr = [];
+        for (j = 0; j < result.length; j++) {
+          if (result[j].indexOf('}}') != -1) {
+            var key = result[j].split('}}')[0].split('.DATA')[0];
+            var str = key;
+            var value = templateData.templates1['0'].Data[str].Value;
+            arr.push({
+              key: key,
+              val: value
+            });
+          }
+        }
+        this.$el.find('#content_div_4').html(_.template($('#preview_wechat_template_messages').html())({
+          model: templateData
         }));
+        var item = this.$el.find('.c-show-template');
+
+        $.ajax({url: '/xaja/AjaxService/assets/get_all_tags.json',
+          dataType: 'json',
+          success: function(result){
+            var obj = result.tags['WECHAT'];
+            var tagArr = [];
+            for (var prop in obj) {
+              if (obj.hasOwnProperty(prop)) {
+                tagArr.push({
+                  label: prop,
+                  value: obj[prop]
+                });
+              }
+            }
+            item.html(_.template($('#details_tpl').html())({
+              temp: templateData.templates1['0'],
+              keylist: arr,
+              capTags: tagArr
+            }));
+          }
+        });
         break;
       case 'WECHAT_SINGLE_TEMPLATE':
         var templateData = _.where(this.model.get('templates').single, {
