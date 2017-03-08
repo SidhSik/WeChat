@@ -1896,15 +1896,24 @@ editTempalteView = Backbone.View.extend({
     var msg_id = $('#message_id').val();
     var group_ids = $('#group_selected').val();
     var account_id = $('#account_id').val();
-    if ($("#msg_template_type").val() == "WECHAT_MULTI_TEMPLATE") {
-      var templateData = _.where(this.model.get('templates')["multi"], {
-        template_id: this.model.getCache('selectedTemplate')
-      });
-    } else {
-      var templateData = _.where(this.model.get('templates')["single"], {
-        template_id: this.model.getCache('selectedTemplate')
-      });
+    switch($("#msg_template_type").val()){
+      case "WECHAT_MULTI_TEMPLATE":
+        var templateData = _.where(this.model.get('templates')["multi"], {
+          template_id: this.model.getCache('selectedTemplate')
+        });
+        break;
+      case "WECHAT_TEMPLATE":
+        var templateData = _.where(this.model.get('templates')["template_messages"], {
+          template_id: this.model.getCache('selectedTemplate')
+        });
+        break;
+      case "WECHAT_SINGLE_TEMPLATE":
+        var templateData = _.where(this.model.get('templates')["single"], {
+          template_id: this.model.getCache('selectedTemplate')
+        });
+        break;
     }
+
     templateData = templateData['0'];
     var editModel = new ajaxModel({
       id: "proccess_plain.json"
@@ -2146,12 +2155,49 @@ deliveryView = Backbone.View.extend({
     }
     var accountDetails = (this.model.get('sender_details'));
     var qIDs = $('#template_selected').attr('qxun-template-id');
-    if ($("#msg_template_type").val() == "WECHAT_MULTI_TEMPLATE") {
-      qIDs = $('#template_selected').attr('article-id');
-      params.singleImageTemplateIds = $('#template_selected').attr('single-image-template-id');
+    switch($("#msg_template_type").val()){
+      case "WECHAT_MULTI_TEMPLATE":
+        qIDs = $('#template_selected').attr('article-id');
+        params.singleImageTemplateIds = $('#template_selected').attr('single-image-template-id');
+        _extend(params,{
+          message: '{"BrandId": "' + accountDetails.brand_id + '","PushName": "' + $("#msg_template_type").val() + '","Content": "' + qIDs + '","PushType": "3","PushInfo": "{OPENID}"}{{wechat}}'
+        });
+        break;
+      case "WECHAT_TEMPLATE":
+        var weChatFileServiceParams = this.model.get('file_service_params');
+        // var weChatData = weChatFileServiceParams.Data;
+        // var data = '{';
+        // for(i in weChatData){
+        //   var temp = weChatData[i]
+        //   data += '"' + weChatData[i] + '":{"' + weChatData[i]['Value']
+        // }
+        _.extend(params,{
+          message: '{"TemplateId": "' + weChatFileServiceParams.TemplateId +
+                   '","OpenId": "' + weChatFileServiceParams.OpenId +
+                   '","OriginalId": "' + weChatFileServiceParams.OriginalId +
+                   '","Title": "' + weChatFileServiceParams.Title +
+                   '","Tag": "' + JSON.stringify(weChatFileServiceParams.Tag) +
+                   '","BrandId": "' + weChatFileServiceParams.BrandId +
+                   '","Url": "' + weChatFileServiceParams.Url +
+                   '","TopColor": "' + weChatFileServiceParams.TopColor +
+                   '","Data": "' + JSON.stringify(weChatFileServiceParams.Data) +
+                   '","preview": "' + weChatFileServiceParams.preview +
+                   '","content": "' + weChatFileServiceParams.content +
+                  '"}'
+          // data: weChatFileServiceParams.Data
+        });
+        break;
+      case "WECHAT_SINGLE_TEMPLATE":
+        _extend(params,{
+          message: '{"BrandId": "' + accountDetails.brand_id + '","PushName": "' + $("#msg_template_type").val() + '","Content": "' + qIDs + '","PushType": "3","PushInfo": "{OPENID}"}{{wechat}}'
+        });
+        break;
     }
+
+
+
     _.extend(params, {
-      message: '{"BrandId": "' + accountDetails.brand_id + '","PushName": "' + $("#msg_template_type").val() + '","Content": "' + qIDs + '","PushType": "3","PushInfo": "{OPENID}"}{{wechat}}',
+      // message: '{"BrandId": "' + accountDetails.brand_id + '","PushName": "' + $("#msg_template_type").val() + '","Content": "' + qIDs + '","PushType": "3","PushInfo": "{OPENID}"}{{wechat}}',
       subject: encodeURIComponent(this.model.get('template_name')),
       template_id: $('#template_selected').val(),
       title: encodeURIComponent(this.model.get('title')),
