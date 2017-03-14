@@ -5188,3 +5188,32 @@ hr {
 .bottom-adjust{
   bottom: -1px;
 }
+
+/** Wechat Template Message Preview styling begins here **/
+
+.mobile-preview-icon {
+  background: url('/images/campaign/android.png') no-repeat;
+  text-align: left;
+  margin: 0 auto;
+  height: 445px;
+  width: 210px;
+  position: relative;
+  background-size: 212px auto;
+}
+
+/*.template-preview-modal .modal-body {
+  position: relative;
+  max-height: 525px;
+}*/
+
+.preview_container_margin {
+  word-wrap: break-word;
+  max-width: 86%;
+  font-size: 13px;
+  position: absolute!important;
+  top: 72px!important;
+  left: 16px!important;
+  padding: 2%;
+}
+
+/** Wechat Template Message Preview styling ends here **/
