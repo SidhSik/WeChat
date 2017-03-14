@@ -1079,26 +1079,27 @@
 			<iframe id="iframe-mobile-landscape" class="flexcroll"></iframe>
 		</div>
 	</div>
+
 	<div class="auth-mobile-preview <%= ( rc.type == 'sms' || rc.type == 'wechat' || rc.type == 'mobilepush') ? '' : 'hide' %>">
 		<div class='auth-bananaphone <%= ( rc.type == 'mobilepush' ) ? 'hide': '' %>'>
 			<div class="auth-bubble-sms portrait <%= ( rc.type == 'sms' ) ? '': 'hide' %>"><%= ( rc.type == 'sms' ) ? rc.messages.msg : '' %></div>
 			<% if(rc.messages.default_args.msg_type == 'WECHAT_MULTI_TEMPLATE') { %>
-			 <div id="multi_image_preview_modal">
-			  <div class="wechatMultiTemplate">
-			  <div class='templateTitle hide'><%=rc.messages.default_args.name%></div>
-			  <div class="singlePicContainer">
-			  <% var index = 1; _.each(rc.messages.default_args.singlePicTemplates,function(value,key) { %>
-			    <div class="singlePic"  template="<%=index%>">
-			      <div class="title"><%=value.title%></div>
-			      <div class="imageContainer"><img src="<%=value.image%>"></div>
-			    </div>
-			     <div class="wechat-msg-content-container hide" template="<%=index++%>">
-		            <div class="close">X</div>
-		            <iframe src = "<%='data:text/html;charset=utf-8,' + (value.content)%>"></iframe>
-		          </div>
-			    <% });%>
-			  </div>
-			  </div>
+			<div id="multi_image_preview_modal">
+				<div class="wechatMultiTemplate">
+					<div class='templateTitle hide'><%=rc.messages.default_args.name%></div>
+					<div class="singlePicContainer">
+					<% var index = 1; _.each(rc.messages.default_args.singlePicTemplates,function(value,key) { %>
+				    	<div class="singlePic"  template="<%=index%>">
+				      		<div class="title"><%=value.title%></div>
+				      		<div class="imageContainer"><img src="<%=value.image%>"></div>
+				    	</div>
+				     	<div class="wechat-msg-content-container hide" template="<%=index++%>">
+			            	<div class="close">X</div>
+			            	<iframe src = "<%='data:text/html;charset=utf-8,' + (value.content)%>"></iframe>
+			          	</div>
+				    <% });%>
+				  	</div>
+			  	</div>
 			</div>
 			<% } if(rc.messages.default_args.msg_type == 'WECHAT_SINGLE_TEMPLATE') { %>
 			<div class="wechat-msg-preview-container <%= ( rc.type == 'wechat' ) ? '': 'hide' %>">
@@ -1107,14 +1108,20 @@
 				<div class="wechat-msg-summary"><%=rc.messages.default_args.summary%></div>
 			</div>
 			<div class="wechat-msg-content-container hide">
-		      <div class="close">X</div>
-		      <iframe src = "<%='data:text/html;charset=utf-8,' + (rc.messages.default_args.templateData.content)%>"></iframe>
+		    	<div class="close">X</div>
+		    	<iframe src = "<%='data:text/html;charset=utf-8,' + (rc.messages.default_args.templateData.content)%>"></iframe>
 		    </div>
+			<% } if(rc.messages.default_args.msg_type == 'WECHAT_TEMPLATE') { %>
+				<div id="mobile-preview-icon-wechat-template-message-authorize">
+					<div class="preview_container preview_container_margin_authorize">
+        			</div>
+				</div>
 			<% } %>
 		</div>
 
 		<div id="mobile-push-auth-preview" class="<%= ( rc.type == 'mobilepush' ) ? '': 'hide' %>"></div>
 	</div>
+
 	<% if(rc.type == 'call'){ %>
 	<div class="auth-call-preview-box <%= ( rc.type == 'call' ) ? '' : 'hide' %>">
 		<div class="call-task-header"><span><?= _campaign('tasks') ?></span><img src="/images/webclient/icoCloseWhite.png" class="pull-right"></div>

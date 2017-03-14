@@ -5216,4 +5216,16 @@ hr {
   padding: 2%;
 }
 
+.preview_container_margin_authorize {
+  /*word-wrap: break-word;*/
+  /*max-width: 86%;*/
+  font-size: 17px;
+  position: absolute!important;
+  top: 94px!important;
+  left: 42px!important;
+  padding: 2%;
+  line-height: 27px;
+  color: #d3d3d3;
+}
+
 /** Wechat Template Message Preview styling ends here **/
