@@ -937,7 +937,9 @@ class OutboundController extends CampaignController{
 		
 		$C_coupon_series_manager = new CouponSeriesManager();
 		$C_coupon_series_manager->loadById($vs_id);
-		if(Util::isLuciFlowEnabled()){
+		$luci = false;
+		if($luci){
+		// if(Util::isLuciFlowEnabled()){
 			$result = $this->getVoucherSeriesDetails($vs_id) ;			
 		}else{
 			$result = $C_coupon_series_manager->getDetails();
