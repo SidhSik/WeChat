@@ -4202,45 +4202,6 @@ iframe.email-iframe-preview {
 /********* STYLING FOR WECHAT TEMPLATE LISTING in CREATIVE ASSETS ***********/
 
 
-/*.wechatTemplateMessage.ca-img-template-view {
-  width: inherit;
-  height: inherit;
-}
-
-.wechatTemplateMessage .ca-img-preview-holder {
-  width: 160px;
-  height: 160px;
-  margin: 5px 10px 5px 5px;
-  text-align: inherit;
-  padding: 5px;
-}
-
-.wechatTemplateMessage .wechat-msg-preview-container {
-  width: 163px;
-  background: #EEEEEE;
-}
-
-.wechatTemplateMessage .footer {
-  position: absolute;
-  background: rgba(0, 0, 0, 0.6);
-  bottom: 33px;
-  width: 93%;
-  padding: 5px;
-  box-sizing: border-box;
-}
-
-.wechatTemplateMessage .footer .favorite {
-  display: inline-block;
-  float: right;
-  font-size: 22px;
-  cursor: pointer;
-  color: #EEEEEE;
-}
-
-.wechatTemplateMessage .footer .favorite.active {
-  color: #86B91E;
-}*/
-
 /** SIngle pic listing styling **/
 
 .wechatSingleTemplate {

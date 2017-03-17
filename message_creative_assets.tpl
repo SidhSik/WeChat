@@ -246,7 +246,7 @@
 					<div class='ca-template-option'>
 						<a class='ca-all sel all_template'><?= _campaign('All') ?></a>
 						<a class='ca-favourites favourite_template' ><?= _campaign("Favourites")?></a>
-				    </div>
+				    	</div>
 				    <div class='ca-search'>
 				        <div class='ca-search-container'>
 				            <i class='c-search-icon'></i>
@@ -1286,7 +1286,7 @@
         return false;
      } %>
       <% if(option.launch_app =="false" || option.launch_app == false){ %>        
-         <div class="ca-mobile-push-ios-container" style="display:none;">
+         <div class="ca-mobile-push-ios-container" style="display:none;" ca-mobile-push-key=<%= key %>>
       <% } else {%>
          <div class="ca-mobile-push-ios-container secondary-cta-show" ca-mobile-push-key=<%= key %>>
       <% } %>   
@@ -1419,7 +1419,7 @@
             }
         }    
 		%>
-        		<input type="text" name="ca-mobile-push-title" id="ca-mobile-push-title" class="ca-mobile-push-text ca-mobile-push-set-text outbound-title-messaage" value="<%= mob_title%>" ca-mobile-push-title-android="<%= mob_title %>" ca-mobile-push-title-ios="<%= mob_title %>" >
+        		<input type="text" name="ca-mobile-push-title" id="ca-mobile-push-title" class="ca-mobile-push-text ca-mobile-push-set-text outbound-title-messaage ca-mobile-push-title" value="<%= mob_title%>" ca-mobile-push-title-android="<%= mob_title %>" ca-mobile-push-title-ios="<%= mob_title %>" >
         	</div>
         	<br>
         	<div class="ca-mobile-push-container-width shellpadding">
@@ -1470,18 +1470,15 @@
                		<div class="mobile_push_image_file">
 	               		<% if(data.tab_value == "android"){
 	                		if(!_.isUndefined(data.template.html_content.ANDROID)){
-	                 			var mob_img = data.template.html_content.ANDROID.expandableDetails.img;
+	                 			var imgSrc = data.template.html_content.ANDROID.expandableDetails.image;
 	              			}
 	              		}
 	          			if(data.tab_value == "ios"){
 	                 		if(!_.isUndefined(data.template.html_content.IOS)){
-	                  			var mob_img = data.template.html_content.IOS.expandableDetails.img;
+	                  			var imgSrc = data.template.html_content.IOS.expandableDetails.image;
 	              			} 
 	              		}   
-	              		if(_.isUndefined(mob_img))
-	              			var imgSrc = ((typeof data == 'object')? data.image:'')
-	              		else
-	               			var imgSrc = mob_img;
+	              		
 	              		%>   
 	            		<div>
 	              			<img src = "<%=imgSrc%>" style="height: 200px;" />
@@ -1594,7 +1591,7 @@
 </script>
 
 <script id="secondary_tpl" type="text/template">
-  <div class="secondary-CTA secondary-CTA<%= data.no %> ca-mobile-push-container-width" secondary-CTA-no = "<%= data.no %>">
+  <div class="secondary-CTA secondary-CTA<%= data.no %> ca-mobile-push-container-width" ca-mobile-push-key = "<%= data.no %>">
     <div style="float:right;margin: 0 14px 5px 5px;">
     <a class="ca-mobile-push-delete-container" ca-mobile-no = "<%= data.no %>"><i class="icon-trash ca-mobile-icon"></i></a>
     <a class="ca-mobile-push-reset-div" ca-mobile-no = "<%= data.no %>"></a> </div>

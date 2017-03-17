@@ -1061,8 +1061,8 @@
                             <% if(typeof is_wechat != 'undefined') { %>
                                 <b><?= _campaign("WeChat OpenIds") ?>:</b> <%= msg_data.params["wechat_"+account_id] ? msg_data.params["wechat_"+account_id] : ( msg_data.params["wechat_0"] ? msg_data.params["wechat_0"] : 0 ) %> <%= control %>
                               <% } else if(typeof is_mobilepush != 'undefined'){ %>
-                                <b><?= _campaign("Android") ?>:</b> <%= 30%> 
-                                <b><?= _campaign("IOS") ?>:</b><%= 40 %>
+                                <b><?= _campaign("Android") ?>:</b> <%= msg_data.android%> 
+                                <b><?= _campaign("IOS") ?>:</b><%= msg_data.ios %>
 
                             <% }else{ %>
                                 <b><?= _campaign("Mobile Numbers") ?>:</b> <%=msg_data.mobile %> <%= control %>
@@ -1931,6 +1931,3 @@
 	    </div>
 	</div>
 </script>
-
-
-

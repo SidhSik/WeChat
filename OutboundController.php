@@ -250,7 +250,6 @@ class OutboundController extends CampaignController{
 					$message["msg_display_type"] = _campaign("MOBILE PUSH");
 					$this->constructTextMessageDetails( $msg_value , $message , $delivery_details );
 				}
-
 				
 				$this->constuctActionMenuForMessage( $msg_value , $message , $campaign_id );
 				
@@ -938,8 +937,7 @@ class OutboundController extends CampaignController{
 		
 		$C_coupon_series_manager = new CouponSeriesManager();
 		$C_coupon_series_manager->loadById($vs_id);
-		$luci = false;
-		if($luci){
+		if(Util::isLuciFlowEnabled()){
 			$result = $this->getVoucherSeriesDetails($vs_id) ;			
 		}else{
 			$result = $C_coupon_series_manager->getDetails();
@@ -1816,12 +1814,47 @@ class OutboundController extends CampaignController{
 		return $this->client->inactivateCampaignReportSchedule( 
 											$campaign_id, $org_id );
 	}
+	private function getMobilePushPreview($params,$data){
+		$group_id = $data['group_id'];
+		$campaign_id = $data['campaign_id'];
+		$type = $data['type'];
+		$extra_params = $data['extra_params'];
+		$msg_data =array();
+		$msg = json_decode($params["message"],true);
+			$templateData = $msg['templateData'];
+			
+			if (array_key_exists('ANDROID', $templateData)) {
+				$msg_subject = $templateData["ANDROID"]["title"];
+				$msg = $templateData["ANDROID"]["message"];
+				$andoid_messages = $this->getUsersPreviewTable( $group_id, $campaign_id, $msg , $msg_subject , $type, $extra_params );
+				foreach ($andoid_messages as $value) {
+				    $value['msg'] = array('message' => $value['msg'],'title'=> $value['subject']);
+				    $msg_data=array("msg"=>array("android" => $value['msg'] ));	    
+				}
+			}
+			$this->logger->debug('getMobilePushPreview android: '.print_r($msg_data,true) );
+			if (array_key_exists('IOS', $templateData)) {
+				$msg_subject = $templateData["IOS"]["title"];
+				$msg = $templateData["IOS"]["message"];
+				$ios_messages = $this->getUsersPreviewTable( $group_id, $campaign_id, $msg , $msg_subject , $type, $extra_params );
+				foreach ($ios_messages as $value) {
+				    $value['msg'] = array('message' => $value['msg'],'title'=> $value['subject']);
+				    $msg_data["msg"]=array_merge($msg_data["msg"],array("ios" => $value['msg'] ));
+				 }		
+			}
+			$this->logger->debug('getMobilePushPreview : '.print_r($msg_data,true) );
+
+
+			return $msg_data;
+
+
+
+	}
 
 	/*
 	 * it fetches messages before sending test email and sms
 	*/
 	public function getMessageDetailsForPreview( $type, $params = array() ){
-	
 		$group_id = $params['group_id'];
 		$type = strtoupper($type);
 		$campaign_id = $params['campaign_id'];
@@ -1831,12 +1864,17 @@ class OutboundController extends CampaignController{
 
 		if ( $type == 'EMAIL' ){
 			$msg_subject = $params["subject"];
-		}else{
-			$msg_subject = false;
+			$messages = $this->getUsersPreviewTable( $group_id, $campaign_id, $msg , $msg_subject , $type, $extra_params );
 		}
-	
-		$messages = $this->getUsersPreviewTable( $group_id, $campaign_id, $msg , $msg_subject , $type, $extra_params );
-		
+		elseif($type == 'MOBILEPUSH'){
+			$data = array("group_id"=>$group_id,"type"=>$type,"campaign_id"=>$campaign_id,"extra_params"=>$extra_params);
+			$messages = array($this->getMobilePushPreview($params,$data));
+			$this->logger->debug('@@@Inside getMessageDetailsForPreview mobilepush:'.print_r($messages,true));
+		}
+		else{
+			$msg_subject = false;
+			$messages = $this->getUsersPreviewTable( $group_id, $campaign_id, $msg , $msg_subject , $type, $extra_params );
+		}
 		if( empty( $messages ) ){
 			$messages = array( "msg" => $msg , "subject" => $msg_subject , "description" => $description , "to" => false );
 		}else{
@@ -2279,8 +2317,12 @@ class OutboundController extends CampaignController{
 			}
 		}
 		$group_details = $this->getGroupDetailsbyGroupIds( $group_ids ) ;
-
+		$auto_generated_group = 'auto_gen_expiry_reminder_group_';
 		foreach ($group_details as $key => $group) {
+			$this->logger->debug("group in mobilepush is : ".print_r($group,true)) ;
+			if( !isset( $group_details['group_id'] ) ) continue;
+			if(strncmp($group['group_label'],$auto_generated_group,strlen($auto_generated_group))===0)
+			continue;
 			$channels = json_decode($group['params'],true) ;
 			$android = $channels["android"];
 			$ios = $channels["ios"];

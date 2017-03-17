@@ -49,8 +49,8 @@
 					<ul class="dropdown-menu camp-menu" role="menu">
 						<li id = "sms-container"><a href="/campaign/messages/v2/CampaignMessages?campaign_id=<%= id %>"><?= _campaign("SMS"); ?></a></li>
     					<li id = "email-container"><a href="/campaign/messages/v2/Messages?campaign_id=<%= id %>"><?= _campaign("Email"); ?></a></li>
-    					<li id="wechat-account-container"><a id = wechat-title><?= _campaign("WeChat"); ?><span id="wechat-caret" class="caret wechat-caret-right"></span></a></li>
-    					<li id="mobilepush-account-container"><a id = "mobilepush-title"><?= _campaign("Mobile Push"); ?><span id="mobilepush-caret" class="caret mobilepush-caret-right"</span></a></li>
+    					<li id="wechat-account-container"><a id = wechat-title><?= _campaign("WeChat"); ?><span id="wechat-caret" class="caret wechat-caret-right caret-right"></span></a></li>
+    					<li id="mobilepush-account-container"><a id = "mobilepush-title"><?= _campaign("Mobile Push"); ?><span id="mobilepush-caret" class="caret mobilepush-caret-right caret-right"</span></a></li>
     					<li id = "calltask-container"><a href="/campaign/messages/v2/CallTask?campaign_id=<%= id %>"><?= _campaign("Call Task"); ?></a></li>
 					</ul>
 				</div>
@@ -88,7 +88,7 @@
 				<% if(key=='<?= _campaign("Sender Email") ?>') {
 					is_sms=0;
 				}%>
-				<% if(key!='<?= _campaign("Sender Email")?>' && key!='<?= _campaign("Sender From")?>' && key!='<?= _campaign("Sender Mobile")?>' && key!='<?= _campaign("Sender Account")?>'){ %>
+				<% if(key!='<?= _campaign("Sender Email")?>' && key!='<?= _campaign("Sender From")?>' && key!='<?= _campaign("Sender Mobile")?>' && key!='<?= _campaign("Sender Account")?>' && key!='<?= _campaign("Schedule Type")?>'){ %>
 					<span class="auth-note"><b><%=key%>:</b> <%=item%></span>
 				<%}%>
 			<% }); %>
@@ -1121,7 +1121,6 @@
 
 		<div id="mobile-push-auth-preview" class="<%= ( rc.type == 'mobilepush' ) ? '': 'hide' %>"></div>
 	</div>
-
 	<% if(rc.type == 'call'){ %>
 	<div class="auth-call-preview-box <%= ( rc.type == 'call' ) ? '' : 'hide' %>">
 		<div class="call-task-header"><span><?= _campaign('tasks') ?></span><img src="/images/webclient/icoCloseWhite.png" class="pull-right"></div>
@@ -1192,14 +1191,14 @@
 					is_sms=0;
 				}%>
 				<% if(key!='<?= _campaign("Sender Email")?>' && key!='<?= _campaign("Sender From")?>' && key!='<?= _campaign("Sender Mobile")?>' && key!='<?= _campaign("Sender Account")?>'){ %>
-				<span class="auth-note"><b> <%=key%>:</b> <%=item%></span>
+					<span class="auth-note"><b> <%=key%>:</b> <%=item%></span>				
 				<%}%>
 			<% }); %>
 			<% if(rc.item_data!=null) {
 				if(rc.type=='wechat') {
 			%>
 			<span class="auth-note"><b><?= _campaign('Target WeChat OpenIds')?>: </b> <%= (_.isObject(rc.item_data['wechatOpenIdCount'])?rc.item_data['wechatOpenIdCount']['wechat_'+rc.messages.default_args.ServiceAccoundId]:0) %></span>
-			<% } else { %>
+			<% } else if(rc.type != 'mobilepush'){ %>
 			<span class="auth-note"><b><?= _campaign('Total Customers')?>:</b> <%=rc.item_data['count']%></span>
 			<% if( is_sms==0 ){ %>
 			<span class="auth-note"><b><?= _campaign('Target Email IDs')?>:</b> <%=rc.item_data['reachable_email']%></span>
@@ -1213,7 +1212,7 @@
 				<span class="margin-fix" style="font-size:16px;"><b><?= _campaign("Sender & Schedule Details"); ?></b></span>
 				<% _.each( rc.checklist, function( item,key ){ %> 
 					<% if(rc.type != 'email'){ %>
-						<% if(key=='<?= _campaign("Sender From")?>' || key=='<?= _campaign("Sender Mobile")?>' || key=='<?= _campaign("Schedule Type")?>'){ %>
+						<% if(key=='<?= _campaign("Sender From")?>' || key=='<?= _campaign("Sender Mobile")?>' || key=='<?= _campaign("Schedule Type")?>' || key=='<?= _campaign("Sender Account")?>'){ %>
 							<span class="auth-note"><b><%=key%>:</b> <%=item%></span>
 						<%}%>
 					<%}%>
@@ -1275,6 +1274,8 @@
 	</div>
 </script>
 <div class="campaigns-parent-container hide">
+ <div class="wait_message_form">
+      </div>
   <div class="campaigns-header-container">
   </div>
   <div class="campaigns-body-container">
@@ -1288,8 +1289,6 @@
           <?= _campaign("TOP"); ?>
         </span>
       </a>
-      <div class="wait_message_form">
-      </div>
       <div class="content-msgcontain" id="content-msgcontain">
       </div>
     </div>

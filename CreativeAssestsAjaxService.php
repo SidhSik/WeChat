@@ -857,7 +857,6 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
  		$org_id = $this->org_id;
  		$uploaded_by = $currentuser->user_id;
  		$asset_type = 'HTML';
- 		$file_content = $params['html_content'];
  		$ref_id = -20;
  		if( $params['template_id'] ) {
  			$template_id = $params['template_id'];
@@ -874,8 +873,15 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
  		}
  		
  		$scope = $params['scope'];
- 		if($scope=='EBILL')
+ 		$file_content = $params['html_content'];
+ 		if($scope=='EBILL') {
  			$tag = 'GENERAL';
+ 		} else {
+ 			$content = $this->sanitizeRequest(
+                    array('html_content' => html_entity_decode($params['html_content']))
+                );
+        	$file_content = htmlentities($content['html_content']);
+ 		}
 
  		if(isset($params['is_favourite']) && $params['is_favourite']=="true"){
  			$is_favourite = 1;
@@ -1085,7 +1091,6 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
 		$this->C_assets = new CreativeAssetsManager();
 
 		$wechat_templates = $this->C_assets->getAllTemplates($this->org_id,'WECHAT_SINGLE_TEMPLATE','WECHAT','GENERAL',$_REQUEST['account_id']);
-		$this->logger->debug("@@#######sikricreativeassetsajaxservice".print_r( $wechat_templates , true ) );		
 		foreach($wechat_templates as $k => $v) {
 			$wechat_templates[$k]['title'] = $wechat_templates[$k]['content']['title'];
 			$wechat_templates[$k]['image'] = $wechat_templates[$k]['content']['image'];

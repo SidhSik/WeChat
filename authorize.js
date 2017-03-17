@@ -242,6 +242,15 @@ var auth = auth || {};
         });
       }
 
+      var non_actionable_ctas = preview_model[channel].expandableDetails.nonActionableCta;
+      if (non_actionable_ctas) {
+        non_actionable_ctas.forEach(function(element) {
+        if (element.actionText) {
+          sec_label.push(element.actionText);
+          }
+        });
+      }      
+
       return sec_label;
     },
 

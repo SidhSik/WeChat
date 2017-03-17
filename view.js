@@ -439,9 +439,6 @@ var header = header || {};
           if (data.default_arguments.msg_type == "WECHAT_MULTI_TEMPLATE") {
             $('#multi_image_preview_modal .singlePic, .wechat-msg-content-container .close').off('click');
           }
-          // if (data.default_arguments.msg_type == "WECHAT_TEMPLATE") {
-
-          // }
           if (data.default_arguments.msg_type == "WECHAT_SINGLE_TEMPLATE") {
             $('.wechat-msg-preview-container, .wechat-msg-content-container.hide .close').off('click');
           }
@@ -620,8 +617,18 @@ var header = header || {};
         });
       }
 
+      var non_actionable_ctas = preview_model[channel].expandableDetails.nonActionableCta;
+      if (non_actionable_ctas) {
+        non_actionable_ctas.forEach(function(element) {
+          if (element.actionText) {
+            sec_label.push(element.actionText);
+          }
+        });
+      }
+
       return sec_label;
     },
+    
     getMsgDetails: function(e) {
       var msg_id = $(e.currentTarget).attr("msg_id");
       var camp_id = $(e.currentTarget).attr("campaign_id");
