@@ -88,7 +88,7 @@
 				<% if(key=='<?= _campaign("Sender Email") ?>') {
 					is_sms=0;
 				}%>
-				<% if(key!='<?= _campaign("Sender Email")?>' && key!='<?= _campaign("Sender From")?>' && key!='<?= _campaign("Sender Mobile")?>' && key!='<?= _campaign("Sender Account")?>' && key!='<?= _campaign("Schedule Type")?>'){ %>
+				<% if(key!='<?= _campaign("Sender Email")?>' && key!='<?= _campaign("Sender From")?>' && key!='<?= _campaign("Sender Mobile")?>' && key!='<?= _campaign("Sender Account")?>'){ %>
 					<span class="auth-note"><b><%=key%>:</b> <%=item%></span>
 				<%}%>
 			<% }); %>
@@ -442,7 +442,7 @@
 							    <label for="campaign_name" class="campaign_label left_label campaign_name_label"><?= _campaign('Campaign Name') ?></label>
 							    <div class="input-container">
 							      <input type="text" id="campaign_name" name="campaign_name" value="<%= name %>"
-							    	class="input-nsl margin_left_5 validate[required;regexcheck</^[0-9a-zA-Z][0-9 _a-zA-z]{0,48}[0-9a-zA-Z]$/>;custom_val<<?= _campaign('Campaign Name can be alphanumeric, can have underscore & space, but no leading or ending underscore & space') ?>>]">
+							    	class="input-nsl margin_left_5 validate[required;skip_locale<zh-cn>;regexcheck</^[0-9a-zA-Z][0-9 _a-zA-z]{0,48}[0-9a-zA-Z]$/>;custom_val<<?= _campaign('Campaign Name can be alphanumeric, can have underscore & space, but no leading or ending underscore & space') ?>>]">
 								</div>
 							</div>
 							  <div class="form-controls main main-content">
@@ -616,7 +616,7 @@
 			    	<label for="coupon_tag"><?= _campaign("Coupon Series Tag"); ?></label>
 					<div class="input-container">
 					  <input type="text" id="info" name="info"
-					    class="input-nsl validate[required;regexcheck</^(?=.*[a-zA-Z]).{1,160}$/>;custom_val< <?= _campaign('Tag should be less than 160 characters and must have atleast one letter') ?>>]">
+					    class="input-nsl validate[required;skip_locale<zh-cn>;regexcheck</^(?=.*[a-zA-Z]).{1,160}$/>;custom_val< <?= _campaign('Tag should be less than 160 characters and must have atleast one letter') ?>>]">
 					</div>
 				  </div>
 				  <div class="form-controls" style="margin-top:8px">
@@ -904,7 +904,7 @@
 	<div class="c-status-option preview_type">
 		<a class="c-status-live preview-mobile-push sel" id="android-all-preview"><?= _campaign("Android")?></a>
 		<input type="hidden" id="android-status" value="true">
-		<a class="c-status-upcoming preview-mobile-push" id="ios-all-preview"><?= _campaign("IOS")?></a>
+		<a class="c-status-upcoming preview-mobile-push preview-margin" id="ios-all-preview"><?= _campaign("IOS")?></a>
 		<input type="hidden" id="ios-status" value="true">		
 	</div>
 	<div class="mobile-preview-icon-android">

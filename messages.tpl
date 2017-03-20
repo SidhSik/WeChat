@@ -61,19 +61,23 @@
 			<%} else {%>
 			<a class='c-button pull-right pt-trigger' id='edit_existing' style="display:none"><?= _campaign("Edit Existing"); ?></a>
 			<%}
-			 } } else {
+			 }else{ %>
+			 <% if( typeof is_mobilepush  == 'undefined') { %>
+			 	<a class='c-button c-button-next pull-right pt-trigger' id='skip-template' data-animation="1" data-goto="4"><?= _campaign("Skip"); ?></a>
+			 <%} else { %>
+			 	<% if(message_id) { %>
+			 		<a class='c-button c-button-next pull-right pt-trigger' id='skip-template' data-animation="1" data-goto="4"><?= _campaign("Skip"); ?></a>
+			 	<%} else { %>
+			 		<a class='c-button c-button-next pull-right pt-trigger' id='skip-template' data-animation="1" data-goto="4" style="display:none"><?= _campaign("Skip"); ?></a>
+			 	<%}%>
+			 <%}%>
+			
+			<% } } else {
 			 if(message_id) { 
 			%>
 			<a class='c-button pull-right pt-trigger' id='edit_existing'><?= _campaign("Edit Existing"); ?></a>
 			
 			<% } } %>
-
-			<% if( typeof is_mobilepush != 'undefined' && message_id > 0) { %>
-			 	<a class='c-button c-button-next pull-right pt-trigger' id='skip-template' data-animation="1" data-goto="4"><?= _campaign("Skip"); ?></a>
-			 	<%} else if(typeof is_mobilepush != 'undefined'){ %>
-			 	<a class='c-button c-button-next pull-right pt-trigger' id='skip-template' data-animation="1" data-goto="4" style="display:none"><?= _campaign("Skip"); ?></a>
-			 <%}%>
-			
 		</div>
 	</div>
 </script>
@@ -162,7 +166,7 @@
 					    <li><a id='open_nlfilter' class='open_popup'><?= _campaign("Using a Non Loyalty Filter") ?></a></li>
 					    <li><a id='upload_csv' class='open_popup'><?= _campaign("Upload CSV"); ?></a></li>
 					    <li><a id='paste_list' class='open_popup'><?= _campaign("Paste a List"); ?></a></li>
-					    <!-- <li><a id='upload_ftp' class='open_popup'><?= _campaign("Upload via FTP"); ?></a></li> -->
+					    
 					    <li class="divider"></li>
 					    <li><a id='deduplicate' class='open_popup'><?= _campaign("De-duplicate from selected"); ?></a></li>
 					  </ul>

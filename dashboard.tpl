@@ -161,7 +161,7 @@
           <label for="campaign_name"><?= _campaign("Campaign Name"); ?>*</label>
           <div class="input-container">
             <input type="text" id="campaign_name" name="campaign_name" 
-            class="input-nsl margin_left_5 validate[required;regexcheck</^[0-9a-zA-Z][0-9 _a-zA-z]{0,48}[0-9a-zA-Z]$/>;custom_val<<?= _campaign('Use only alphanumeric , underscore, space & maximum upto 50 characters') ?>>]">
+            class="input-nsl margin_left_5 validate[required;skip_locale<zh-cn>;regexcheck</^[0-9a-zA-Z][0-9 _a-zA-z]{0,48}[0-9a-zA-Z]$/>;custom_val<<?= _campaign('Use only alphanumeric , underscore, space & maximum upto 50 characters') ?>>]">
           </div>
         </div>
 
@@ -557,7 +557,6 @@
 
     </div>
 </script>
-
 <script type="text/template" id="account-type">
   <div class="ca-option-div" id="ca-option-mobilePushAccounts">
   <select name="mobile-push-accounts" id="mobile-push-accounts">
@@ -568,14 +567,12 @@
     _.each(rc.mobilePushAccounts, function(v, k) { %>
       <option value="<%= v.id %>"> <%= v.account_name %></option>
     <% }); %>
-      
   </select>
     <% if (rc.mobilePushAccounts.length) { %>
       <span class="ca-option-scope-separator"> &nbsp;/&nbsp;</span>
     <% }} %>
   </div>
 </script>
-
 <script id="insert_image_tpl" type="text/template">
   <div>
     <div class="modal fade image-gallery-modal" id="image_gallery_modal" style="width:90%;left: 25%">
@@ -1789,7 +1786,6 @@
     </div>
     <div style="float: right;">x</div>
   </div>
-
   <% if(rc.ios_data.notif_img) { %>
   <div id="ios-notif-img">
     <img src="<%= rc.ios_data.notif_img %>" alt="image" height="100%" width="100%">
@@ -1833,7 +1829,7 @@
             <div class="preview_container preview_container_margin_mobilepush">
             </div>
           </div>
-          <div class="mobile-preview-icon-ios" style="display:none">
+          <div class="mobile-preview-icon-ios">
             <div class="preview_container_ios preview_container_margin_mobilepush_ios">
             </div>
           </div>
@@ -2344,7 +2340,8 @@
   <div class="IOS-secondary-detail-block">
   <div class="secondary-CTA">
     <div style="float:right;margin: 10px;">
-    <a class=""><i class="icon-trash ca-mobile-icon-ios"></i></a> </div>
+    <a class="ca-mobile-push-delete-container"><i class="icon-trash ca-mobile-icon ca-mobile-icon-ios"></i></a> 
+    </div>
      <div class="display-headtitle ios-cta-name"><%=  rc.ios_name%></div>
      <input type="hidden" id="ios_category_id" value="<%=  rc.categoryId  %>">
 

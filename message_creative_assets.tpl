@@ -1150,9 +1150,9 @@
 				        <%= model.html_content.ANDROID.message %>
 				    </div>
     			<% }else{ %>
-    				<span><?= _campaign("No Android Push")?></span>
+    				<span class="no-push-available"><?= _campaign("No Android Push")?></span>
     			<% } %> 
-    				<div class="mobile-icon"><?= _campaign("android")?>
+    				<div class="mobile-icon"> <img src="/images/android-logo.png" alt="<?= _campaign("android") ?>">
     					<i class="icon-android"></i>
     				</div>
     			</div>
@@ -1166,9 +1166,9 @@
 				        <%= model.html_content.IOS.message %>
 				    </div>
     			<% }else{ %>
-    				<span class="no-mobile-display"><?= _campaign("No IOS Push")?></span>
+    				<span class="no-push-available"><?= _campaign("No IOS Push")?></span>
     			<% }  %>
-    				<div class="mobile-icon"><?= _campaign("ios")?>
+    				<div class="mobile-icon"><img src="/images/apple.png" alt="<?= _campaign("ios") ?>">
     					<i class="icon-apple"></i>
     				</div>
     			</div>
@@ -1229,27 +1229,30 @@
 	<div class="ca_edit_template_container ca-edit-template-container  mobile-push-container">
 		<div class="ca-edit-left-panel">
 			<div class="ca-layout-header shellpadding"><?= _campaign("Mobile Push Template") ?></div>
-			<div><div class="tags-container">
-           <ul>
-              <%
-               _.each(data.tags, function( v, k ) { 
-               %>
-               <li class="tag-list tag-margin">
-               <span class="mobile-tag-icon"><i class="icon-caret-right"></i></span>
-                <span><a class="parent" tag-data=<%=v%>><%= k %></a></span>
-                </li>
-                 <ul style="display:none">
-              <%
-               if(_.isObject(v)){
-                _.each(v, function( v1, k1 ) { 
-                %>
-               <li class="tag-list"><span><a class="insert_tag" tag-data=<%= v1%> ><%= k1 %></a></span></li>
-              <% });
-               } %>
-               </ul>
-             <% }); %>
-            </ul>
-        </div></div>
+			<div>
+			<div class="tags-container">
+	            <ul>
+	            <% 
+	            template_function = function(tag){
+	              var html_val = '';
+	              if(tag.children){
+	                html_val += '<li class="tag-list tag-margin" ><span class="mobile-tag-icon"><i class="icon-caret-right"></i></span><span><a class="parent">'+tag.name+'</a></span><ul style="display:none">';
+	                _.each(tag.children, function(t){
+	                  html_val += template_function(t)
+	                })
+	                html_val += '</ul>'
+	              } else if(tag.val){
+	                html_val += '<li class="tag-list"><span><a class="insert_tag" tag-data='+ tag.val +' >'+tag.name+'</a></span>';
+	              }
+	              html_val += '</li>'
+	              return html_val;
+	            } 
+	            _.each(data.tags, function(tag) {
+	              print(template_function(tag));
+	            })%>
+	            </ul>
+        	</div>
+			</div>
 		</div>
 		<div class="ca-edit-right-panel">
 		<div>
@@ -1271,8 +1274,8 @@
   <div class="IOS-secondary-detail-block">
   <div class="secondary-CTA">
     <div style="float:right;margin: 10px;">
-    <a class="ca-mobile-push-delete-container"></a>
-    <a class=""><i class="icon-trash ca-mobile-icon-ios"></i></a> </div>
+    <a class="ca-mobile-push-delete-container"><i class="icon-trash ca-mobile-icon-ios"></i></a> 
+    </div>
      <div class="display-headtitle ios-cta-name"><%=  ios_name%></div>
      <input type="hidden" id="ios_category_id" value="<%=  categoryId  %>">
 
@@ -1293,7 +1296,7 @@
       <div class="ca-mobile-push-reset-container" >    
       <input type="hidden" id="ca-mobile-push-ios-launchapp-<%= key %>" value="<%= option.launch_app %>">        
       <input type="hidden" id="ca-mobile-push-ios-<%= key %>"  value="<%= option.item_id %>">
-               <div class="display-headtitle ca-mobile-push-secondary-label" id="ca-mobile-push-label<%= key %>"
+               <div class="display-headtitle ca-mobile-push-secondary-label ios-label" id="ca-mobile-push-label<%= key %>"
               ca-mobile-push-label<%= key %>-ios="<%= option.item_text%>" ><%= option.item_text%></div>
              </div>
              <div>
@@ -1350,7 +1353,7 @@
 <script id="create_IOS_secondary_tpl" type="text/template">
 	<div class="secondary-CTA secondary-CTA-IOS">
 	  <div style="float:right;margin: 10px;">
-	    <a class="ca-mobile-push-reset-ios-div"><i class="icon-trash ca-mobile-icon"></i></a> </div>
+	    <a class="ca-mobile-push-reset-ios-div"><i class="icon-trash ca-mobile-icon"></i></a></div>
 	   <div class="secondary-cta-ios-container">
 	    <table class="table table-striped">
 	          <thead><th style="width: 65%;"><?= _campaign("NAME & DESCRIPTION")?></th>

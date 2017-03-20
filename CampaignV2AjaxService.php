@@ -329,12 +329,13 @@ class CampaignV2AjaxService extends BaseAjaxService{
 	}
 
 	private function addRemoveCustomer($param){
+		$jsorglocale =  $_SESSION["jOrgLocale"];
 		$mobile = $param[0];
 		$email = $param[1];
 		$operation = $param[2];
 		$group_id = $param[3];
 		$campaign_id = $param[4];
-
+		$this->logger->debug('js org locale:'.$jsorglocale);
 		list( $first_name , $last_name ) = Util::parseName( $param[5] );
 		$first_name = addslashes( $first_name );
 		$last_name =  addslashes( $last_name );
@@ -346,7 +347,7 @@ class CampaignV2AjaxService extends BaseAjaxService{
 					throw new Exception( _campaign("Please add valid Mobile Number") );
 				else
 					$user = UserProfile::getByMobile( $mobile );
-			}else if( $email ){
+			}else if( strtolower($jsorglocale) ==='en' && $email ){
 				if( !Util::checkEmailAddress( $email ) )
 					throw new Exception( _campaign("Please add valid Email Address") );
 				else
@@ -370,7 +371,7 @@ class CampaignV2AjaxService extends BaseAjaxService{
 					throw new Exception( _campaign("Please add valid Mobile Number") );
 				}
 					
-				if( !empty($email) && !Util::checkEmailAddress( $email ) ){
+				if(  strtolower($jsorglocale) !=='zh-cn' && !empty($email) && !Util::checkEmailAddress( $email ) ){
 					throw new Exception( _campaign("Please add valid Email Address") );
 				}
 					

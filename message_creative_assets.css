@@ -1371,11 +1371,17 @@ div#dTags {
     text-align: left !important;;
     margin: 10px;
 }
-.mobile-icon {
+.mobile-icon{
     position: absolute;
     bottom: 0;
     right: 0;
-    padding: 10px;
+    padding: 3px;
+    opacity: 0.75;
+}
+.no-push-available {
+  position: absolute;
+  top: 40%;
+  left: 15%;
 }
 .no-mobile-display{
   margin: 10px;
@@ -1408,7 +1414,7 @@ div#dTags {
 }
 .ca-mobile-push-copy{
   margin-right: -12px;
-  color: #3b6b71;
+  color: #86b91e !important;
 }
 .ca-mobile-push-italic{
   font-style: italic;
@@ -1470,13 +1476,31 @@ div#dTags {
 
 .ca-mobile-push-delete-container {
   font-size: 21px;
+  color: #86b91e;
 }
 
 .ca-mobile-push-reset-container {
   font-size: 18px;
+  color: #86b91e;
 }
 
 .ca-mobile-push-reset-ios-div{
   font-size: 21px;
   margin-right: 5px;
+  color: #86b91e;
+}
+.red-error {
+  color: #FF0000
+}
+.ca-mobile-icon{
+  font-size: 22px;
+}
+.ca-required{
+  margin: 10px 0px 10px 0px;
+}
+.ios-label{
+  font-size: 13px;
+}
+.mobile-push-tabs a{
+  color: #86b91e;
 }
