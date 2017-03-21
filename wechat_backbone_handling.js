@@ -2165,12 +2165,6 @@ deliveryView = Backbone.View.extend({
         break;
       case "WECHAT_TEMPLATE":
         var weChatFileServiceParams = this.model.get('file_service_params');
-        // var weChatData = weChatFileServiceParams.Data;
-        // var data = '{';
-        // for(i in weChatData){
-        //   var temp = weChatData[i]
-        //   data += '"' + weChatData[i] + '":{"' + weChatData[i]['Value']
-        // }
         _.extend(params,{
           message: '{"TemplateId": "' + weChatFileServiceParams.TemplateId +
                    '","OpenId": "' + weChatFileServiceParams.OpenId +
