@@ -2178,7 +2178,6 @@ deliveryView = Backbone.View.extend({
                    '","preview": "' + weChatFileServiceParams.preview +
                    '","content": "' + weChatFileServiceParams.content +
                   '"}'
-          // data: weChatFileServiceParams.Data
         });
         break;
       case "WECHAT_SINGLE_TEMPLATE":
