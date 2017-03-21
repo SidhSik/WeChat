@@ -962,7 +962,7 @@
         </ul>
       </div>
     </div>
-    <div class="modal fade template-preview-modal" id="edit_template_preview_modal" style="width:22%; left: 54%">
+    <div class="modal fade template-preview-modal" id="edit_template_preview_modal" style="width:22%; left: 59%">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-body">
