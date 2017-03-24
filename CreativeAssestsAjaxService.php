@@ -129,6 +129,21 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
 				$this->getWeChatContentTemplates();
 				break;
 
+			case 'get_wechat_dvs_tags':
+				$this->logger->debug('Get Wechat Dvs tags');
+				$this->getWeChatDvsTags();
+				break;
+
+			case 'get_wechat_loyalty_tags':
+				$this->logger->debug('Get Wechat Loyalty tags');
+				$this->getWeChatLoyaltyTags();
+				break;
+
+			case 'get_wechat_outbound_tags':
+				$this->logger->debug('Get Wechat Outbound tags');
+				$this->getWeChatOutboundTags();
+				break;
+
 			case 'get_all_mobile_push_templates':
 				  $this->logger->debug('get all mobile push templates');
 			    $this->getAllMobilePushTemplates();
@@ -1315,6 +1330,25 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
     		$scopes['Ebill'] = 'EBILL';
     	}
     	$this->data['scopes'] = $scopes;
+ 	}
+
+ 	private function getWeChatDvsTags(){
+ 		$dvs_tags = ModuleWiseTagsProvider::getTags( SupportedTagList::$WECHAT_DVS);
+ 		$tags = array('DVS'=>$dvs_tags);
+ 		$this->logger->debug("@@@sikri wechat dvs tags json". print_r($dvs_tags,true));
+ 		$this->data['tags']=$tags;
+ 	}
+ 	private function getWeChatLoyaltyTags(){
+ 		$loyalty_tags = ModuleWiseTagsProvider::getTags( SupportedTagList::$WECHAT_LOYALTY);
+ 		$tags = array('LOYALTY'=>$loyalty_tags);
+ 		$this->logger->debug("@@@sikri wechat dvs tags json". print_r($dvs_tags,true));
+ 		$this->data['tags']=$tags;
+ 	}
+ 	private function getWeChatOutboundTags(){
+ 		$outbound_tags = ModuleWiseTagsProvider::getTags( SupportedTagList::$WECHAT_OUTBOUND);
+ 		$tags = array('OUTBOUND'=>$outbound_tags);
+ 		$this->logger->debug("@@@sikri wechat dvs tags json". print_r($dvs_tags,true));
+ 		$this->data['tags']=$tags;
  	}
 
  	private function getAllWechatTags(){

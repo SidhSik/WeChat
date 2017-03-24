@@ -2159,12 +2159,12 @@ deliveryView = Backbone.View.extend({
       case "WECHAT_MULTI_TEMPLATE":
         qIDs = $('#template_selected').attr('article-id');
         params.singleImageTemplateIds = $('#template_selected').attr('single-image-template-id');
-        _extend(params,{
+        _.extend(params,{
           message: '{"BrandId": "' + accountDetails.brand_id + '","PushName": "' + $("#msg_template_type").val() + '","Content": "' + qIDs + '","PushType": "3","PushInfo": "{OPENID}"}{{wechat}}'
         });
         break;
       case "WECHAT_TEMPLATE":
-        var weChatFileServiceParams = this.model.get('file_service_params');
+        var weChatFileServiceParams = this.model.get('file_service_params'); 
         _.extend(params,{
           message: '{"TemplateId": "' + weChatFileServiceParams.TemplateId +
                    '","OpenId": "' + weChatFileServiceParams.OpenId +
@@ -2181,7 +2181,7 @@ deliveryView = Backbone.View.extend({
         });
         break;
       case "WECHAT_SINGLE_TEMPLATE":
-        _extend(params,{
+        _.extend(params,{
           message: '{"BrandId": "' + accountDetails.brand_id + '","PushName": "' + $("#msg_template_type").val() + '","Content": "' + qIDs + '","PushType": "3","PushInfo": "{OPENID}"}{{wechat}}'
         });
         break;

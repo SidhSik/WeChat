@@ -194,7 +194,18 @@ var CreativeAssetsWeChatTemplateView = Backbone.View.extend({
     'click .preview_template': 'previewTemplate',
     'change .c-selected-box': 'showTemplate',
     'change .c-selected-tag-box': 'tagMapping',
+    'click #wechat_scope_selector .wechat_scope': 'getTagsByScope',
     'keyup .c-input-tag-box': 'tagMapping'
+  },
+  getTagsByScope: function(e) {
+    this.wechatScope = e.currentTarget.value;
+    console.log(this.wechatScope);
+    $.ajax({url: '/xaja/AjaxService/assets/'+'get_'+e.currentTarget.value+'_tags.json',
+      dataType: 'json',
+      success: function(res){
+        console.log(res);
+      }
+    });
   },
   tagMapping: function(e) {
     //var array = this.model.attributes.current_editing_template.attributes.file_service_params.Tag;
@@ -457,6 +468,7 @@ ca_wechat.WeChatTemplateCollection = Backbone.Collection.extend({
     return resp.templates;
   },
 });
+
 var WechatModelTemplate = Backbone.Model.extend({
   url: '/xaja/AjaxService/assets/get_wechat_content_template.json',
   defaults: function() {

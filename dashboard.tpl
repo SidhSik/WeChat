@@ -1141,6 +1141,20 @@
   </div>
   <div></div>
   <div class = "c-show-template-details">
+    <div id="wechat_scope_selector">
+      <span style="padding-right: 48px;"><?= _campaign("Select Scope:") ?></span>
+      <form style="display: inline-flex;">
+        <label style="padding-right: 21px;">
+          <input type="radio" class="wechat_scope" value="wechat_loyalty"><?= _campaign("LOYALTY") ?>
+        </label>
+        <label style="padding-right: 21px;">
+          <input type="radio" class="wechat_scope" value="wechat_dvs"><?= _campaign("DVS") ?>
+        </label>
+        <label style="padding-right: 21px;">
+          <input type="radio" class="wechat_scope" value="wechat_outbound"><?= _campaign("OUTBOUND") ?>
+        </label>
+      </form>
+    </div>
     <div class="c-margin-bottom" style="white-space: nowrap;" title="<%- temp['Title'] +'-'+ temp['TemplateId'] %>">
       <%- temp['Title'] +'-'+ temp['TemplateId'] %>
     </div>
