@@ -1181,7 +1181,7 @@
           <option selected="selected" disabled>
             <?= _campaign('Capillary Tags');?>
           </option>
-        <%console.log(capTags); _.each(capTags,function(key1,val1){%>
+        <% _.each(capTags,function(key1,val1){%>
         <% if(key.val==capTags[val1]['value']){ %>  
           <option selected="selceted" id="<%-capTags[val1]['value']%>" value="<%-capTags[val1]['value']%>">
             <%-capTags[val1]['label']%>
