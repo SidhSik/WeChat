@@ -1065,7 +1065,7 @@
     <div class="edit_template_loader"></div>
     <div class="ca-fleft lang_enabled_hide"></div>
 
-    <div class="modal fade template-preview-modal" id="edit_template_preview_modal" style="width:22%; left: 54%">
+    <div class="modal fade template-preview-modal" id="edit_template_preview_modal" style="width:22%; left: 59%">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-body">
@@ -1145,13 +1145,13 @@
       <span style="padding-right: 48px;"><?= _campaign("Select Scope:") ?></span>
       <form style="display: inline-flex;">
         <label style="padding-right: 21px;">
-          <input type="radio" class="wechat_scope" value="wechat_loyalty"><?= _campaign("LOYALTY") ?>
+          <input type="radio" id="wechat_loyalty" class="wechat_scope" value="wechat_loyalty" <%- (scope == 'wechat_loyalty')? 'checked': '' %> ><?= _campaign("LOYALTY") ?>
         </label>
         <label style="padding-right: 21px;">
-          <input type="radio" class="wechat_scope" value="wechat_dvs"><?= _campaign("DVS") ?>
+          <input type="radio" id="wechat_dvs" class="wechat_scope" value="wechat_dvs" <%- (scope == 'wechat_dvs')? 'checked': '' %> ><?= _campaign("DVS") ?>
         </label>
         <label style="padding-right: 21px;">
-          <input type="radio" class="wechat_scope" value="wechat_outbound"><?= _campaign("OUTBOUND") ?>
+          <input type="radio" id="wechat_outbound" class="wechat_scope" value="wechat_outbound" <%- (scope == 'wechat_outbound')? 'checked': '' %> ><?= _campaign("OUTBOUND") ?>
         </label>
       </form>
     </div>
@@ -1178,12 +1178,12 @@
 
       <div>
         <select style = "width:100%;" class="c-tag-<%-key.key%> c-selected-tag-box" wechat-tag-data="<%-key.key%>">
-          <option selected="selected" disabled>
+          <!-- <option selected="selected" disabled>
             <?= _campaign('Capillary Tags');?>
-          </option>
+          </option> -->
         <% _.each(capTags,function(key1,val1){%>
         <% if(key.val==capTags[val1]['value']){ %>  
-          <option selected="selceted" id="<%-capTags[val1]['value']%>" value="<%-capTags[val1]['value']%>">
+          <option selected="selected" id="<%-capTags[val1]['value']%>" value="<%-capTags[val1]['value']%>">
             <%-capTags[val1]['label']%>
           </option>
         <% }else{ %>

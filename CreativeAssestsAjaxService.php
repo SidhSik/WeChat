@@ -1359,8 +1359,9 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
 		$campaign_email_tags = ModuleWiseTagsProvider::getTags( SupportedTagList::$CAMPAIGN_EMAIL);
 		$we_chat_tags = ModuleWiseTagsProvider::getTags( SupportedTagList::$WECHAT);
 		$dvs_email_tags = ModuleWiseTagsProvider::getTags( SupportedTagList::$DVS_EMAIL);
+		$outbound_tags = ModuleWiseTagsProvider::getTags( SupportedTagList::$WECHAT_OUTBOUND);
 
-		$tags = array('POINTSENGINE'=>$points_engine_tags, 'REFERRAL' => $referral_tags, 'ORG'=>$campaign_email_tags,'WECHAT'=>$we_chat_tags,'DVS'=>$dvs_email_tags);
+		$tags = array('POINTSENGINE'=>$points_engine_tags, 'REFERRAL' => $referral_tags, 'ORG'=>$campaign_email_tags,'WECHAT'=>$we_chat_tags,'DVS'=>$dvs_email_tags, 'OUTBOUND'=>$outbound_tags);
 		$C_config_mgr = new ConfigManager();
     	$is_ebill_enabled = $C_config_mgr->getKey( "CONF_CAMPAIGN_EBILL_TEMPLATES_ENABLED" );
 		if($is_ebill_enabled){

@@ -2164,7 +2164,28 @@ deliveryView = Backbone.View.extend({
         });
         break;
       case "WECHAT_TEMPLATE":
-        var weChatFileServiceParams = this.model.get('file_service_params'); 
+        var weChatFileServiceParams = this.model.get('file_service_params');
+
+        var datajsonforqxun = {};
+        var payload = {};
+
+        _.extend(datajsonforqxun, {
+          OriginalId: weChatFileServiceParams.OriginalId,
+          Title: weChatFileServiceParams.Title,
+          Tag: JSON.stringify(weChatFileServiceParams.Tag),
+          Url: weChatFileServiceParams.Url,
+          TopColor: weChatFileServiceParams.TopColor,
+          Data: JSON.stringify(weChatFileServiceParams.Data),
+          content: weChatFileServiceParams.content
+        });
+
+        _.extend(payload, {
+          BrandId: weChatFileServiceParams.BrandId,
+          OpenId: weChatFileServiceParams.OpenId,
+          TemplateId: weChatFileServiceParams.TemplateId,
+          DataJson: datajsonforqxun
+        });
+
         _.extend(params,{
           message: '{"TemplateId": "' + weChatFileServiceParams.TemplateId +
                    '","OpenId": "' + weChatFileServiceParams.OpenId +
@@ -2177,7 +2198,9 @@ deliveryView = Backbone.View.extend({
                    '","Data": "' + JSON.stringify(weChatFileServiceParams.Data) +
                    '","preview": "' + weChatFileServiceParams.preview +
                    '","content": "' + weChatFileServiceParams.content +
-                  '"}'
+                   // '","payload": "' + payload +
+                  '"}',
+          payload: payload
         });
         break;
       case "WECHAT_SINGLE_TEMPLATE":

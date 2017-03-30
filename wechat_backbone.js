@@ -82,7 +82,7 @@ var WeChatTemplateModel = ca_wechat.WeChatTemplateModel = Backbone.Model.extend(
     //self.get('templates1')[0]['Title']
     //set Account Id
     self.set('AccountId', $('#wechat-accounts option:selected').val());
-    self.set('wechatScope', wechatScope );
+    self.set('scope', wechatScope );
     var data = self.toJSON();
     status = $.post(url, data, function(resp) {
       if (resp.success) {
@@ -186,6 +186,8 @@ var CreativeAssetsWeChatTemplateView = Backbone.View.extend({
       this.$(".c-selected-box").val(edit_name);
       this.$(".c-selected-box").trigger('change');
     }
+
+
     return this;
   },
   events: {
@@ -199,26 +201,39 @@ var CreativeAssetsWeChatTemplateView = Backbone.View.extend({
     'keyup .c-input-tag-box': 'tagMapping'
   },
   getTagsByScope: function(e) {
+    //$('.wechat_scope').removeAttr('checked');
+    //$('#'+e.currentTarget.value).attr('checked','true');
     var that = this;
     that.wechatScope = e.currentTarget.value;
     console.log(that.wechatScope);
-    $.ajax({url: '/xaja/AjaxService/assets/'+'get_'+e.currentTarget.value+'_tags.json',
-      dataType: 'json',
-      success: function(res){
-        console.log(res);
-        switch(that.wechatScope){
-          case 'wechat_loyalty':
-            that.showTemplate(e, res['tags']['LOYALTY']);
-            break;
-          case 'wechat_dvs':
-            that.showTemplate(e, res['tags']['DVS']);
-            break;
-          case 'wechat_outbound':
-            that.showTemplate(e, res['tags']['OUTBOUND']);
-            break;
-        }
-      }
-    });
+    // $.ajax({url: '/xaja/AjaxService/assets/'+'get_'+e.currentTarget.value+'_tags.json',
+    //   dataType: 'json',
+    //   success: function(res){
+    //     console.log(res);
+    //     switch(that.wechatScope){
+    //       case 'wechat_loyalty':
+    //         that.showTemplate(e, res['tags']['LOYALTY']);
+    //         break;
+    //       case 'wechat_dvs':
+    //         that.showTemplate(e, res['tags']['DVS']);
+    //         break;
+    //       case 'wechat_outbound':
+    //         that.showTemplate(e, res['tags']['OUTBOUND']);
+    //         break;
+    //     }
+    //   }
+    // });
+    switch(that.wechatScope){
+      case 'wechat_loyalty':
+        that.showTemplate(e, this.model.attributes['tags']['LOYALTY']);
+        break;
+      case 'wechat_dvs':
+        that.showTemplate(e, this.model.attributes['tags']['DVS']);
+        break;
+      case 'wechat_outbound':
+        that.showTemplate(e, this.model.attributes['tags']['OUTBOUND']);
+        break;
+    }
   },
   tagMapping: function(e) {
     //var array = this.model.attributes.current_editing_template.attributes.file_service_params.Tag;
@@ -234,10 +249,6 @@ var CreativeAssetsWeChatTemplateView = Backbone.View.extend({
     
   },
   showTemplate: function(e, tagObj) {
-    if(this.wechatScope == null || this.wechatScope.length == 0){
-      this.wechatScope = 'wechat_loyalty';
-    }
-  
     var src = $(e.target);
     var item = src.closest(".c-wechat-main");
     //var tmpl = _.template(this.detailsTempl);
@@ -247,6 +258,12 @@ var CreativeAssetsWeChatTemplateView = Backbone.View.extend({
     for (i = 0; i < length; i++) {
       if ($('.c-selected-box').val() == this.renderedList.get('templates1')[i]['Title']) break;
     }
+
+    if(typeof(this.wechatScope) == "undefined"){
+      //this.wechatScope = this.renderedList.attributes.scope;
+      this.wechatScope = "wechat_loyalty";
+    }
+
     var current_editing_template = new WeChatTemplateModel();
     current_editing_template.set('template_id', this.model.get('template_id'));
     current_editing_template.set('file_service_params', this.renderedList.get('templates1')[i]);
@@ -268,8 +285,23 @@ var CreativeAssetsWeChatTemplateView = Backbone.View.extend({
     var tagArr = [];
 
     if(tagObj == null || tagObj.length == 0){
-      console.log("The passed tag array is empty so fetching from model by default loyalty tags");
-      var obj = this.renderedList.get('tags')['WECHAT'];
+      console.log("Showing by default the tags for the scope that was selected while creating this template");
+      switch(this.wechatScope){
+        case 'WECHAT_LOYALTY':
+        case 'wechat_loyalty':
+          var obj = this.renderedList.get('tags')['WECHAT'];
+          break;
+        case 'WECHAT_DVS':
+        case 'wechat_dvs':
+          var obj = this.renderedList.get('tags')['DVS'];
+          break;
+        case 'WECHAT_OUTBOUND':
+        case 'wechat_outbound':
+          var obj = this.renderedList.get('tags')['OUTBOUND'];
+          break;
+        default:
+          var obj = this.renderedList.get('tags')['WECHAT'];
+      }
     } else {
       var obj = tagObj;
       console.log(obj);
@@ -286,7 +318,8 @@ var CreativeAssetsWeChatTemplateView = Backbone.View.extend({
     item.find(".c-show-template").html(this.tpl2({
       temp: this.renderedList.attributes.templates1[i],
       keylist: arr,
-      capTags: tagArr
+      capTags: tagArr,
+      scope: this.wechatScope
     }));
     //item.find(".c-show-template").html(this.tpl2(this.model.selected_model.toJSON()));
   },
