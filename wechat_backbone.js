@@ -201,8 +201,6 @@ var CreativeAssetsWeChatTemplateView = Backbone.View.extend({
     'keyup .c-input-tag-box': 'tagMapping'
   },
   getTagsByScope: function(e) {
-    //$('.wechat_scope').removeAttr('checked');
-    //$('#'+e.currentTarget.value).attr('checked','true');
     var that = this;
     that.wechatScope = e.currentTarget.value;
     console.log(that.wechatScope);
