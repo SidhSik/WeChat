@@ -2166,41 +2166,38 @@ deliveryView = Backbone.View.extend({
       case "WECHAT_TEMPLATE":
         var weChatFileServiceParams = this.model.get('file_service_params');
 
-        var datajsonforqxun = {};
-        var payload = {};
+        // var datajsonforqxun = {};
+        // var payload = {};
 
-        _.extend(datajsonforqxun, {
-          OriginalId: weChatFileServiceParams.OriginalId,
-          Title: weChatFileServiceParams.Title,
-          Tag: JSON.stringify(weChatFileServiceParams.Tag),
-          Url: weChatFileServiceParams.Url,
-          TopColor: weChatFileServiceParams.TopColor,
-          Data: JSON.stringify(weChatFileServiceParams.Data),
-          content: weChatFileServiceParams.content
-        });
+        // _.extend(datajsonforqxun, {
+        //   BrandId: weChatFileServiceParams.BrandId,
+        //   TemplateId: weChatFileServiceParams.TemplateId,
+        //   OpenId: weChatFileServiceParams.OpenId,
+        //   Url: weChatFileServiceParams.Url,
+        //   TopColor: weChatFileServiceParams.TopColor,
+        //   Data: weChatFileServiceParams.Data
+        // });
 
-        _.extend(payload, {
-          BrandId: weChatFileServiceParams.BrandId,
-          OpenId: weChatFileServiceParams.OpenId,
-          TemplateId: weChatFileServiceParams.TemplateId,
-          DataJson: datajsonforqxun
-        });
+        // _.extend(payload, {
+        //   OriginalId: weChatFileServiceParams.OriginalId,
+        //   DataJson: datajsonforqxun
+        // });
+
+        // _
+        // .extend(params, {
+        //   message: datajsonforqxun
+        // });
 
         _.extend(params,{
           message: '{"TemplateId": "' + weChatFileServiceParams.TemplateId +
                    '","OpenId": "' + weChatFileServiceParams.OpenId +
                    '","OriginalId": "' + weChatFileServiceParams.OriginalId +
                    '","Title": "' + weChatFileServiceParams.Title +
-                   '","Tag": "' + JSON.stringify(weChatFileServiceParams.Tag) +
                    '","BrandId": "' + weChatFileServiceParams.BrandId +
                    '","Url": "' + weChatFileServiceParams.Url +
                    '","TopColor": "' + weChatFileServiceParams.TopColor +
-                   '","Data": "' + JSON.stringify(weChatFileServiceParams.Data) +
-                   '","preview": "' + weChatFileServiceParams.preview +
-                   '","content": "' + weChatFileServiceParams.content +
-                   // '","payload": "' + payload +
-                  '"}',
-          payload: payload
+                   '","Data": ' + JSON.stringify(weChatFileServiceParams.Data) +
+                  '}'
         });
         break;
       case "WECHAT_SINGLE_TEMPLATE":
