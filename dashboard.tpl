@@ -539,9 +539,10 @@
         <div class="ca-option-div" id="ca-option-div">
           <select name="template_type" id="template_type">
             <option value="email" selected><?= _campaign("Email Templates")?></option> 
-          <option value="coupon"><?= _campaign("Coupon Templates")?></option>
-          <option value="image"><?= _campaign("Image Gallery")?></option>
-          <option value="social"><?= _campaign("Wechat Templates")?></option>
+            <option value="coupon"><?= _campaign("Coupon Templates")?></option>
+            <option value="image"><?= _campaign("Image Gallery")?></option>
+            <option value="social"><?= _campaign("Wechat Templates")?></option>
+            <option value="mobile_push" class="mobile_push"><?= _campaign("Mobile Push Templates")?></option>
         </select>
       </div>
       </div>

@@ -841,6 +841,7 @@ class CampaignController extends BaseController{
 			$uploader->validate();
 			
 			$valid_count = $uploader->getValidRecordsCount();
+			$this->logger->debug("madhu test uploader".$valid_count);
 			if($type == 'sticky_group' && $valid_count == 0)
 			{
 				throw new Exception(_campaign("No valid records to import"));
@@ -5775,5 +5776,16 @@ class CampaignController extends BaseController{
 	{
 		return $this->campaign_model_extension->getMessageDefaultArgumentsByGuid($org_id, $campaign_id, $guid);
 	}
+	//updating approve bulk msg in msg queue
+
+	public function updateBulkMsgApproveDetails($msg_id){
+		$this->logger->debug("updateBulkMsgApproveDetails:".$msg_id);
+		 $C_bulk_message = new BulkMessage();
+		 $C_bulk_message->load( $msg_id );
+		 $C_bulk_message->setApproved( 0 );
+		 $C_bulk_message->setApprovedBy( 0 );
+		 $C_bulk_message->update( $msg_id );
+	}
 }
+
 ?>

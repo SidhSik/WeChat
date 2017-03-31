@@ -656,6 +656,13 @@ class CampaignMessagesAjaxService extends BaseAjaxService {
 		$this->logger->debug ( '@@@HELLO' . $html_content );
 		$this->data ['plain_text'] = $html_content;
 	}
+	private function getTotalCustomerFromChannelJson($channelToCustomerCount){
+		$sum = 0 ;
+		foreach ($channelToCustomerCount as $value) {
+			$sum += $value ;
+		}
+		return $sum ;
+	}	
 	private function processPlainTextView() {
 		$this->logger->debug ( '@@@Inside process plain text view' . print_r ( $_GET, true ) );
 		$this->data ['info'] = 'success';
@@ -699,6 +706,15 @@ class CampaignMessagesAjaxService extends BaseAjaxService {
 		$group_info ['is_favourite'] = $group_hash ['is_favourite'];
 		$group_info ['email'] = ($params ['email']) ? $params ['email'] : 0;
 		$group_info ['mobile'] = ($params ['mobile']) ? $params ['mobile'] : 0;
+		$group_info ['android'] = 0 ;
+		if($params['android']){
+			$group_info ['android'] = $this->getTotalCustomerFromChannelJson($params['android']) ;			
+		}
+		$group_info ['ios'] = 0 ;
+		if($params ['ios']){
+			$group_info['ios'] = $this->getTotalCustomerFromChannelJson($params['ios']) ;
+		}
+		
 		$group_info ['params'] = $params;
 		$group_info ['name'] = $list;
 		
@@ -869,10 +885,10 @@ class CampaignMessagesAjaxService extends BaseAjaxService {
 			} elseif ($msg_type=='PUSH') {
 				$supported_channels_array = array();
 				$template_data = json_decode(rawurldecode($params['message']),true);
-				if(  isset($params['accountDetails']['android']) && ($params['accountDetails']['android']!=null) && (array_key_exists("ANDROID", $template_data['templateData'])) ){
+				if(  isset($params['accountDetails']['android']) && ($params['accountDetails']['android']!=null && ( $params['accountDetails']['android'] == '1') ) && (array_key_exists("ANDROID", $template_data['templateData'])) ){
 					array_push($supported_channels_array, "android");
 				}
-				if(isset($params['accountDetails']['ios']) && ($params['accountDetails']['ios']!=null) && (array_key_exists("IOS", $template_data['templateData']))){
+				if(isset($params['accountDetails']['ios']) && ($params['accountDetails']['ios']!=null && ( $params['accountDetails']['ios'] == '1') ) && (array_key_exists("IOS", $template_data['templateData']))){
 						//$supported_channels = $supported_channels.",ios";
 					array_push($supported_channels_array, "ios");
 				}
@@ -1175,9 +1191,12 @@ class CampaignMessagesAjaxService extends BaseAjaxService {
 					}
 				}
 				$this->data ['msg_data'] = rawurlencode ( $message ["msg"] );
+			}elseif(strtoupper ( $type ) === "MOBILEPUSH"){
+				$this->data ['msg_data'] = $message ["msg"];
+				$this->logger->debug('@@@Inside generatePreviewUrl mobilepush:'.print_r($message ["msg"] ,true));
 			} else {
 				$this->data ['msg_data'] = rawurlencode ( $message ["msg"] );
-			}
+				}
 		} catch ( Exception $e ) {
 			$this->logger->debug ( '@@@EXCEPTION:' . $e->getMessage () );
 			$this->data ['error'] = $e->getMessage ();
@@ -1709,6 +1728,7 @@ class CampaignMessagesAjaxService extends BaseAjaxService {
  		$this->logger->debug("params passed are : ".print_r($params,true)) ;
 		$C_campaign_controller = new CampaignController ();
 		$default_data = array() ;
+		$message_id = $params['message_id'] ;
 		if ($message_id){
 			$default_data = $C_campaign_controller->getDefaultValuesbyMessageId ( $params['message_id'] ) ;			
 		}

@@ -333,21 +333,7 @@ private function getMobilePushTags(){
 							_campaign('dd Mon')=>	'{{valid_till_date.FORMAT_8}}'
 							),
 						),
-					_campaign('Custom') =>array(
-						_campaign('Custom Tag 1') => '{{custom_tag_1}}',
-						_campaign('Custom Tag 2') => '{{custom_tag_2}}',
-						_campaign('Custom Tag 3') => '{{custom_tag_3}}',
-						_campaign('Custom Tag 4') => '{{custom_tag_4}}',
-						_campaign('Custom Tag 5') => '{{custom_tag_5}}',
-						),
-					_campaign('Group Tags') => array(
-						_campaign('Group Tag 1') => '{{group_tag_1}}',
-						_campaign('Group Tag 2') => '{{group_tag_2}}',
-						_campaign('Group Tag 3') => '{{group_tag_3}}',
-						_campaign('Group Tag 4') => '{{group_tag_4}}',
-						_campaign('Group Tag 5') => '{{group_tag_5}}'
-						),
-					_campaign('Points') => array( 
+				_campaign('Points') => array( 
 						_campaign('Number of points') => '{{promotion_points}}',
 							_campaign('Points Expiry Date Formats') =>
 								array(

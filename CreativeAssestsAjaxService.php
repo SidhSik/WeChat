@@ -1341,13 +1341,13 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
  	private function getWeChatLoyaltyTags(){
  		$loyalty_tags = ModuleWiseTagsProvider::getTags( SupportedTagList::$WECHAT_LOYALTY);
  		$tags = array('LOYALTY'=>$loyalty_tags);
- 		$this->logger->debug("@@@sikri wechat dvs tags json". print_r($dvs_tags,true));
+ 		$this->logger->debug("@@@sikri wechat loyalty tags json". print_r($dvs_tags,true));
  		$this->data['tags']=$tags;
  	}
  	private function getWeChatOutboundTags(){
  		$outbound_tags = ModuleWiseTagsProvider::getTags( SupportedTagList::$WECHAT_OUTBOUND);
  		$tags = array('OUTBOUND'=>$outbound_tags);
- 		$this->logger->debug("@@@sikri wechat dvs tags json". print_r($dvs_tags,true));
+ 		$this->logger->debug("@@@sikri wechat outbound tags json". print_r($dvs_tags,true));
  		$this->data['tags']=$tags;
  	}
 
@@ -1382,8 +1382,9 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
 		$dvs_email_tags = ModuleWiseTagsProvider::getTags( SupportedTagList::$DVS_EMAIL);
 		$mobile_push_tags = ModuleWiseTagsProvider::getTags( SupportedTagList::$MOBILEPUSH);
 		$ebill_tags =  ModuleWiseTagsProvider::getTags( SupportedTagList::$EBILL);
+		$outbound_tags = ModuleWiseTagsProvider::getTags( SupportedTagList::$WECHAT_OUTBOUND);
 
-		$tags = array('POINTSENGINE'=>$points_engine_tags, 'REFERRAL' => $referral_tags, 'ORG'=>$campaign_email_tags,'WECHAT'=>$we_chat_tags,'DVS'=>$dvs_email_tags, 'MOBILEPUSH' => $mobile_push_tags);
+		$tags = array('POINTSENGINE'=>$points_engine_tags, 'REFERRAL' => $referral_tags, 'ORG'=>$campaign_email_tags,'WECHAT'=>$we_chat_tags,'DVS'=>$dvs_email_tags, 'MOBILEPUSH' => $mobile_push_tags, 'OUTBOUND'=>$outbound_tags);
 		$C_config_mgr = new ConfigManager();
     	$is_ebill_enabled = $C_config_mgr->getKey( "CONF_CAMPAIGN_EBILL_TEMPLATES_ENABLED" );
 		if($is_ebill_enabled){
