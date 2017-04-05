@@ -351,7 +351,8 @@ var header = header || {};
       var html = '<div class="c-table-layout display-table c-table-campaign-messages">';
       $.each(messages, function(index) {
         var message = messages[index];
-        console.log(message);
+        if(message.msg_type==="SMS_EXPIRY_REMINDER" || message.msg_type==="EMAIL_EXPIRY_REMINDER")
+          return true;
         html += '<div class="display-mtablerow">';
         html += '<div class="display-mtablecell">';
         if(message.msg_display_type != 'MOBILE PUSH'){

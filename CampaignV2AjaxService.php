@@ -1295,6 +1295,11 @@ class CampaignV2AjaxService extends BaseAjaxService{
 			$this->data['recipient_list'] = $reach_response_mode;
 		}
 		
+		$mobile_push_accounts = $this->OrgController->getCapIdToLicenceCodeMap($this->org_id, "PUSH") ;
+		$this->data['is_mobile_push_enabled'] = false ;
+		if(is_array($mobile_push_accounts) && count($mobile_push_accounts)>0)
+			$this->data['is_mobile_push_enabled'] = true ;
+
 		//$this->data['is_favourite'] = ( $is_favourite ) ? $is_favourite : false;
 		
 		$conquest_enabled = $this->C_conquest_data_service->isConquestEnabled( $this->org_id );

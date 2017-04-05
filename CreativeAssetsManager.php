@@ -443,6 +443,79 @@ class CreativeAssetsManager{
 		return $C_asset->preview( $C_template );
 	}
 	
+	public function getAllOutboundTemplates( $org_id , $asset_type = 'HTML' , $scope = 'ORG', $tag = 'GENERAL' , $account_id = -20 ){
+		// $org_id = 780;
+	
+		$types = $this->getTemplateTypesAsOption();
+	
+		$template_type_id = $types[ strtoupper($asset_type) ];
+		
+		$this->logger->debug('template_type_id'.print_r($template_type_id,true));
+
+		$where_filter = '';
+		if( $tag )
+			$where_filter = "AND t.tag = '$tag'";
+		
+		$sql = " SELECT t.id as template_id,t.template_name,t.file_service_params,t.is_preview_generated,t.tag,
+				t.scope AS scope,t.is_favourite AS is_favourite
+					FROM `creative_assets`.`templates` t
+					JOIN `creative_assets`.`org_templates` ot
+						ON ot.org_id = '$org_id' AND t.id = ot.template_id AND ot.`ref_id` = '$account_id'
+				WHERE t.`template_type_id` = '$template_type_id' AND t.`is_deleted` = '0' 
+					AND t.`scope` = '$scope' $where_filter ORDER BY t.`last_updated_on` DESC ";		
+
+		$result = $this->C_database->query( $sql );
+		$this->logger->debug("@@#######sikricreativeassetsmanager".print_r( $result , true ) );
+		$this->logger->debug('template_type_result'.print_r($result[0],true));
+		$template_list = array();
+		if( !empty($result) ){
+								
+			foreach( $result as $key => $data ){
+				$templates = array();
+				$templates['template_id'] = $data['template_id'];
+				$templates['template_name'] = $data['template_name'];
+				$templates['tag'] = $data['tag'];
+				$templates['is_preview_generated'] = $data['is_preview_generated'];
+
+				$templates['is_favourite'] = $data['is_favourite'];
+				$templates['scope'] = $data['scope'];
+				$file_service_params = $data['file_service_params'];
+				$file_service_params = json_decode( $file_service_params , true );
+				$this->logger->debug('file_service_params'.print_r($file_service_params,true));
+				$templates['file_size'] = $file_service_params['file_size'];
+				
+				if( $asset_type === 'TEXT' )
+					$templates['content'] = rawurldecode( $file_service_params['text_content'] );
+				else if( $asset_type === 'HTML' ){
+					$templates['content'] = _campaign("Preview is being generated.")." <br/>"._campaign("Please Refresh this page after 2 minutes to see the preview!");
+					if( $data['is_preview_generated'] == 1 )
+						$templates['content'] = $file_service_params['preview_http_url'];
+				}else if( $asset_type === 'IMAGE' ){
+					$templates['content'] = $file_service_params['file_http_url'];
+					$templates['preview_url'] = $file_service_params['preview_http_url'];
+				}else if( $asset_type === 'WECHAT_TEMPLATE' ){
+					$templates['content'] = rawurldecode( $file_service_params['content'] );
+					$templates['templates1'][0] = ($file_service_params);
+					$templates['file_service_params'] = ($file_service_params);
+					//$templates['content'] = rawurldecode( $file_service_params['preview'] );
+				} else if( $asset_type === 'WECHAT_SINGLE_TEMPLATE'  || $asset_type === 'WECHAT_MULTI_TEMPLATE') {
+					$templates['content'] = $file_service_params;
+				}
+				elseif ($asset_type==='MOBILEPUSH_TEMPLATE' || $asset_type==='MOBILEPUSH_IMAGE') {
+					$templates['content'] = $file_service_params;
+					
+				}
+				else {
+					throw new Exception(_campaign("Invalid creative asset type passed").$asset_type);
+				}
+				array_push( $template_list , $templates );
+			}
+		}
+		$this->logger->debug('template_type_id_list'.print_r($template_list,true));
+		return $template_list;
+	}
+
+
 	public function getAllTemplates( $org_id , $asset_type = 'HTML' , $scope = 'ORG', $tag = 'GENERAL' , $account_id = -20 ){
 		// $org_id = 780;
 	
@@ -456,22 +529,13 @@ class CreativeAssetsManager{
 		if( $tag )
 			$where_filter = "AND t.tag = '$tag'";
 		
-		// $sql = " SELECT t.id as template_id,t.template_name,t.file_service_params,t.is_preview_generated,t.tag,
-		// 		t.scope AS scope,t.is_favourite AS is_favourite
-		// 			FROM `creative_assets`.`templates` t
-		// 			JOIN `creative_assets`.`org_templates` ot
-		// 				ON ot.org_id = '$org_id' AND t.id = ot.template_id AND ot.`ref_id` = '$account_id'
-		// 		WHERE t.`template_type_id` = '$template_type_id' AND t.`is_deleted` = '0' 
-		// 			AND t.`scope` = '$scope' $where_filter ORDER BY t.`last_updated_on` DESC ";
-		
 		$sql = " SELECT t.id as template_id,t.template_name,t.file_service_params,t.is_preview_generated,t.tag,
 				t.scope AS scope,t.is_favourite AS is_favourite
 					FROM `creative_assets`.`templates` t
 					JOIN `creative_assets`.`org_templates` ot
 						ON ot.org_id = '$org_id' AND t.id = ot.template_id AND ot.`ref_id` = '$account_id'
 				WHERE t.`template_type_id` = '$template_type_id' AND t.`is_deleted` = '0' 
-					$where_filter ORDER BY t.`last_updated_on` DESC ";
-		
+					$where_filter ORDER BY t.`last_updated_on` DESC ";		
 
 		$result = $this->C_database->query( $sql );
 		$this->logger->debug("@@#######sikricreativeassetsmanager".print_r( $result , true ) );

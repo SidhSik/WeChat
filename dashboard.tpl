@@ -1201,6 +1201,13 @@
     <span style="clear:both; float:left; margin: 18px 0px 0px 22px;"><%='Link to details page'%></span>
     <input type="text" class="c-input-width c-url-data-style c-input-tag-box c-tag-url" name="UrlName" wechat-tag-data="url" placeholder="http://" value="<%=((temp['Url']!='{{wechat_service_acc_url}}')?temp['Url']:'')%>" style="width: 500px;margin: 14px 0 0 20px;" />
   </div>
+
+  <div class = "c-show-url">
+    <span style="clear:both; float:left; margin: 8px 0px 0px 22px;"><%='Is This Internal Url'%></span>
+    <input type="checkbox" style="margin-left: 23px;margin-top: 13px;
+" />
+  </div>
+
 </script>
 
 <script id="ca_edit_template_tpl" type="text/template">

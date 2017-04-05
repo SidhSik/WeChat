@@ -2019,17 +2019,6 @@ class OutboundController extends CampaignController{
 
 		foreach ( $reach_response_mode->recipient_list as $row ){
 			
-			//adding dummy data to mobile push
-			$json = json_encode(array(
-			"channel" =>  array("IOS"=>array("subscription_count"=> "25",
-											"unsubscription_count"=> "15",
-									    	 "unavailable_count"=> "10"),
-
-					      		"Android"=>array("subscription_count"=> "12",
-												"unsubscription_count"=> "6",
-												"unavailable_count"=> "2")
-			)));
-
 			$group = array();
 			$group['totalCustomerCount'] = $row->totalCustomerCount;
 			$group['group_id'] = $row->groupId;
@@ -2044,29 +2033,7 @@ class OutboundController extends CampaignController{
 			$group['wechatOpenIdCount'] = $row->wechatOpenIdcount;
 			$group['wechat_accounts'] = $service_info;
 
-			//adding mobile push account details
 			
-			$androidBreakup = array();
-			$iosBreakup = array();
-			$mobilePush = json_decode($json);
-
-			$this->logger->debug('The mobilePush object in getReachableCustomer is : '.print_r($mobilePush->channel,true));
-			
-			$iosBreakup["subscription_count"] = $mobilePush->channel->IOS->subscription_count;
-			$iosBreakup["unsubscription_count"] = $mobilePush->channel->IOS->unsubscription_count;
-			$iosBreakup["unavailable_count"] = $mobilePush->channel->IOS->unavailable_count;
-		
-		
-			$androidBreakup["subscription_count"] = $mobilePush->channel->Android->subscription_count;
-			$androidBreakup["unsubscription_count"] = $mobilePush->channel->Android->unsubscription_count;
-			$androidBreakup["unavailable_count"] = $mobilePush->channel->Android->unavailable_count;
-				
-			
-			$this->logger->debug('The androidBreakup object in getReachableCustomer is : '.print_r($androidBreakup,true));
-			$this->logger->debug('The ios object in getReachableCustomer is : '.print_r($iosBreakup,true));
-			$group["androidBreakup"] = $androidBreakup;
-			$group["iosBreakup"] = $iosBreakup;
-
 			$emailBreakup = array();
 			foreach ( $row->emailBreakup as $row1 ){
 				if($row1->sendingRules=='VALID')
@@ -2172,9 +2139,6 @@ class OutboundController extends CampaignController{
 				else
 					$percentage_email = 0;
 
-				$androidCount = $group_details['androidCount'];
-				$iosCount = $group_details['iosCount'];
-
 				$total_mobile = $group_details['mobile_count'];
 				$valid_mobile = $group_details['mobileBreakup']['valid'];
 				$invalid_mobile = $group_details['mobileBreakup']['invalid'];
@@ -2192,42 +2156,6 @@ class OutboundController extends CampaignController{
 				else
 					$percentage_mobile = 0;
 
-				$total_mobile_push_can_contact = $group["androidBreakup"]["subscription_count"] + 
-				$group["iosBreakup"]["subscription_count"];
-				$group["iosBreakup"]["subscription_count"];
-				$total_android_can_contact = $group_details["androidBreakup"]["subscription_count"];
-				$total_ios_can_contact = $group_details["iosBreakup"]["subscription_count"];
-
-				$subscribed_android = $group_details["androidBreakup"]["subscription_count"];
-				$unsubscribed_android = $group_details["androidBreakup"]["unsubscription_count"];
-				$unavailable_android = $group_details["androidBreakup"]["unavailable_count"];
-				
-				$subscribed_ios = $group_details["iosBreakup"]["subscription_count"];
-				$unsubscribed_ios = $group_details["iosBreakup"]["unsubscription_count"];
-				$unavailable_ios = $group_details["iosBreakup"]["unavailable_count"];
-
-				$mobile_push_total_subscribed = $group["androidBreakup"]["subscription_count"] + 
-				$group["iosBreakup"]["subscription_count"];
-				$mobile_push_total_unsubscribed = $group["androidBreakup"]["unsubscription_count"] + $group["iosBreakup"]["unsubscription_count"];
-				$mobile_push_total_unavailable = $unavailable_ios + $unavailable_android;
-
-				$total_android_cannot_contact = $group["androidBreakup"]["unsubscription_count"] + $group["androidBreakup"]["unavailable_count"];
-				$total_ios_cannot_contact = $group["iosBreakup"]["unsubscription_count"] + 
-				$group["iosBreakup"]["unavailable_count"];
-
-				/*"channel" =>  array("IOS"=>array("subscription_count"=> "25",
-											"unsubscription_count"=> "15",
-									    	 "unavailable_count"=> "10"),
-
-					      		"Android"=>array("subscription_count"=> "12",
-												"unsubscription_count"=> "6",
-												"unavailable_count"=> "2")*/
-
-				$this->logger->debug('The total_ios_cannot_contact is : '.$total_ios_cannot_contact);
-				$total_mobile_push_cannot_contact = $total_ios_cannot_contact + $total_android_cannot_contact;
-
-				
-				
 				if( $control_users > 0 ){
 
 					$count = $group_details['totalCustomerCount'];
@@ -2291,38 +2219,12 @@ class OutboundController extends CampaignController{
 				$sticky_array[$group_id]['type'] = $group_details['type'];
 				$sticky_array[$group_id]['isPrevious'] = $group_details['isPrevious'];
 				$sticky_array[$group_id]['wechat_accounts'] = $wechat_accounts;
-
-
-				$sticky_array[$group_id]["totalMobilePushCanContact"] = $total_mobile_push_can_contact ? $total_mobile_push_can_contact:0;
-				$sticky_array[$group_id]["totalAndroidCanContact"] = $total_android_can_contact ? $total_android_can_contact:0;
-				$sticky_array[$group_id]["totalIOSCanContact"] = $total_ios_can_contact ? $total_ios_can_contact:0;
-
-				$sticky_array[$group_id]['androidSubscriptionCount'] = $subscribed_android ? $subscribed_android:0;
-				$sticky_array[$group_id]['androidUnsubscriptionCount'] = $unsubscribed_android ? $unsubscribed_android:0;
-				$sticky_array[$group_id]['androidUnavailableCount'] = $unavailable_android ? $unavailable_android:0;
-
-				$sticky_array[$group_id]['iosSubscriptionCount'] = $subscribed_ios ? $subscribed_ios:0;
-				$sticky_array[$group_id]['iosUnsubscriptionCount'] = $unsubscribed_ios ? $unsubscribed_ios:0;
-				$sticky_array[$group_id]['iosUnavailableCount'] = $unavailable_ios ? $unavailable_ios:0;
-				$sticky_array[$group_id]['mobilePushTotalSubscribed'] = $mobile_push_total_subscribed ? $mobile_push_total_subscribed
-				:0;
-				$sticky_array[$group_id]['mobilePushTotalUnsubscribed'] = $mobile_push_total_unsubscribed ? $mobile_push_total_unsubscribed
-				:0;
-				$sticky_array[$group_id]['mobilePushTotalUnavailable'] = $mobile_push_total_unavailable ? $mobile_push_total_unavailable
-				:0;
-				$sticky_array[$group_id]["totalMobilePushCannotContact"] = $total_mobile_push_cannot_contact ? $total_mobile_push_cannot_contact:0;
-				$sticky_array[$group_id]["totalAndroidCannotContact"] = $total_android_cannot_contact ? $total_android_cannot_contact:0;
-				$sticky_array[$group_id]["totalIOSCannotContact"] = $total_ios_cannot_contact ? $total_ios_cannot_contact:0;
-				$sticky_array[$group_id]["androidCount"] = $total_android_cannot_contact + $total_android_can_contact; 
-				$sticky_array[$group_id]["iosCount"] = $total_ios_cannot_contact + $total_ios_can_contact;
-
 			}
 		}
 		$group_details = $this->getGroupDetailsbyGroupIds( $group_ids ) ;
 		$auto_generated_group = 'auto_gen_expiry_reminder_group_';
 		foreach ($group_details as $key => $group) {
-			$this->logger->debug("group in mobilepush is : ".print_r($group,true)) ;
-			if( !isset( $group_details['group_id'] ) ) continue;
+			if( !isset( $group['group_id'] ) ) continue;
 			if(strncmp($group['group_label'],$auto_generated_group,strlen($auto_generated_group))===0)
 			continue;
 			$channels = json_decode($group['params'],true) ;
@@ -2337,7 +2239,7 @@ class OutboundController extends CampaignController{
 			foreach($ios as $count){
 				$iosCount += $count ; 
 			}
-
+			$this->logger->debug("get mobile push group params : ".$group['params']." android : ".print_r($android,true)." ios : ".print_r($ios,true)) ;
 			$sticky_array[$group['group_id']]["iosCount"] = $iosCount ;
 			$sticky_array[$group['group_id']]["androidCount"] = $androidCount ;
 		}

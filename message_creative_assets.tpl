@@ -458,7 +458,6 @@
     <% } %>
   	<% }); %>
   	</div>
-  	<% console.log(capTags); %>
   	<div class = "c-show-template-details">
     	<div class="c-margin-bottom" style="white-space: nowrap;" title="<%- temp['Title'] +'-'+ temp['TemplateId'] %>">
       		<%- temp['Title'] +'-'+ temp['TemplateId'] %>
@@ -1300,7 +1299,7 @@
               ca-mobile-push-label<%= key %>-ios="<%= option.item_text%>" ><%= option.item_text%></div>
              </div>
              <div>
-               <div class="span5"> 
+               <div class="span" style="width: 250px !important;margin-left: 0px !important;"> 
                <%
                if(!_.isUndefined(option.item_type)){
                 if(option.item_type=="DEEP_LINK"){
@@ -1395,7 +1394,7 @@
 
 <script id="create_mobile_push_template_tpl" type="text/template">
     <div class="channel-container">
-        <div class="c-sel-temp c-float span6 outbound-cta-container">
+        <div class="c-float span6 outbound-cta-container">
         	<div class="ca-mobile-push-container-width shellpadding">
 	          	<span class="display-headtitle"><?= _campaign("Title")?></span>
 	          	<span class="red-error">*</span>
@@ -1460,8 +1459,7 @@
 	        	<span class="show-count"><%= mob_msg.length %></span>
 	        	<?= _campaign('characters')?>
 	        </div>
-	        <div style="clear:both"></div>
-	        <div style="clear:both"></div>
+	        <br/>
         <%if(data.template_scope == "MOBILEPUSH_IMAGE") {%>
             <div class="shellContainer">
              	<div style="font-size: 12px;">

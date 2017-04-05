@@ -258,8 +258,8 @@ var CreativeAssetsWeChatTemplateView = Backbone.View.extend({
     }
 
     if(typeof(this.wechatScope) == "undefined"){
-      //this.wechatScope = this.renderedList.attributes.scope;
-      this.wechatScope = "wechat_loyalty";
+      this.wechatScope = this.renderedList.attributes.scope;
+      // this.wechatScope = "wechat_loyalty";
     }
 
     var current_editing_template = new WeChatTemplateModel();
@@ -332,6 +332,9 @@ var CreativeAssetsWeChatTemplateView = Backbone.View.extend({
     $(this.el).undelegate('.back_to_view', 'click');
   },
   saveNewTemplate: function() {
+    if( this.$('.c-show-url input[type="checkbox"]').is(':checked') == true) {
+      this.model.get('current_editing_template').get('file_service_params').Url = 'https://capillary.qxuninfo.com/webapi/WeixinOauth/Authorize?appid=wxdebdf3f10c2f33f8&callback=' + this.model.get('current_editing_template').get('file_service_params').Url + '&scope=snsapi_base';
+    }
     var self = this;
     if (this.model.get('current_editing_template') == "") {
       ca_wechat.helper.showFlash(_campaign('Please select the template'), true);

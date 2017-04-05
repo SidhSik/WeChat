@@ -1048,8 +1048,12 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
  	private function getAllWeChatTemplateMessages( $return = false ) {
  		$this->C_assets = new CreativeAssetsManager();
 
- 		$wechat_templates = $this->C_assets->getAllTemplates(
-			$this->org_id,'WECHAT_TEMPLATE','WECHAT', 'GENERAL', 
+ 	// 	$wechat_templates = $this->C_assets->getAllTemplates(
+		// 	$this->org_id,'WECHAT_TEMPLATE','WECHAT', 'GENERAL', 
+		// 	$_REQUEST['account_id']
+		// );
+		$wechat_templates = $this->C_assets->getAllOutboundTemplates(
+			$this->org_id,'WECHAT_TEMPLATE','wechat_outbound', 'GENERAL', 
 			$_REQUEST['account_id']
 		);
 		foreach($wechat_templates as $k => $v) {
