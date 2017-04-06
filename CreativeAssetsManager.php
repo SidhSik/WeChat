@@ -443,7 +443,7 @@ class CreativeAssetsManager{
 		return $C_asset->preview( $C_template );
 	}
 	
-	public function getAllOutboundTemplates( $org_id , $asset_type = 'HTML' , $scope = 'ORG', $tag = 'GENERAL' , $account_id = -20 ){
+	public function getAllTemplates( $org_id , $asset_type = 'HTML' , $scope = 'ORG', $tag = 'GENERAL' , $account_id = -20 ){
 		// $org_id = 780;
 	
 		$types = $this->getTemplateTypesAsOption();
@@ -516,7 +516,7 @@ class CreativeAssetsManager{
 	}
 
 
-	public function getAllTemplates( $org_id , $asset_type = 'HTML' , $scope = 'ORG', $tag = 'GENERAL' , $account_id = -20 ){
+	public function getAllTemplatesCreativeAssets( $org_id , $asset_type = 'HTML' , $scope = 'ORG', $tag = 'GENERAL' , $account_id = -20 ){
 		// $org_id = 780;
 	
 		$types = $this->getTemplateTypesAsOption();

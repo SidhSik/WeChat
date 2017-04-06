@@ -1744,6 +1744,7 @@ editTempalteView = Backbone.View.extend({
         var str = templateData.content;
         var result = str.split('{{');
         var arr = [];
+        var obj = [];
         for (j = 0; j < result.length; j++) {
           if (result[j].indexOf('}}') != -1) {
             var key = result[j].split('}}')[0].split('.DATA')[0];
@@ -1763,7 +1764,19 @@ editTempalteView = Backbone.View.extend({
         $.ajax({url: '/xaja/AjaxService/assets/get_all_tags.json',
           dataType: 'json',
           success: function(result){
-            var obj = result.tags['WECHAT'];
+            switch(templateData.scope){
+              case 'wechat_outbound':
+                obj = result.tags['OUTBOUND'];
+                break;
+              case 'wechat_dvs':
+                obj = result.tags['DVS'];
+                break;
+              case 'wechat_loyalty':
+                obj = result.tags['WECHAT'];
+                break;
+              default:
+                obj = result.tags['OUTBOUND'];
+            }
             var tagArr = [];
             for (var prop in obj) {
               if (obj.hasOwnProperty(prop)) {
@@ -1773,10 +1786,18 @@ editTempalteView = Backbone.View.extend({
                 });
               }
             }
+
+            var tempstr = templateData.templates1[0]['Url'];
+            var tempurl = tempstr.substring(tempstr.indexOf("callback="),tempstr.indexOf("&scope")).split('=')[1];
+            var tempsend = (tempstr!='{{wechat_service_acc_url}}') ? ( (tempstr.indexOf("&callback=") == -1) ? tempstr : tempurl  ) : '';
+            var tempInternal = (tempstr.indexOf("&callback=") == -1) ? 0 : 1;
+
             item.html(_.template($('#details_tpl').html())({
               temp: templateData.templates1['0'],
               keylist: arr,
-              capTags: tagArr
+              capTags: tagArr,
+              url: tempsend,
+              isInternalUrl: tempInternal
             }));
           }
         });

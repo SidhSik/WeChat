@@ -258,8 +258,7 @@ var CreativeAssetsWeChatTemplateView = Backbone.View.extend({
     }
 
     if(typeof(this.wechatScope) == "undefined"){
-      this.wechatScope = this.renderedList.attributes.scope;
-      // this.wechatScope = "wechat_loyalty";
+      this.wechatScope = this.renderedList.attributes.scope || "wechat_loyalty";
     }
 
     var current_editing_template = new WeChatTemplateModel();
@@ -312,12 +311,18 @@ var CreativeAssetsWeChatTemplateView = Backbone.View.extend({
         });
       }
     }
+    var tempstr = this.renderedList.attributes.templates1[i]['Url'];
+    var tempurl = tempstr.substring(tempstr.indexOf("callback="),tempstr.indexOf("&scope")).split('=')[1];
+    var tempsend = (tempstr!='{{wechat_service_acc_url}}') ? ( (tempstr.indexOf("&callback=") == -1) ? tempstr : tempurl  ) : '';
+    var tempInternal = (tempstr.indexOf("&callback=") == -1) ? 0 : 1;
 
     item.find(".c-show-template").html(this.tpl2({
       temp: this.renderedList.attributes.templates1[i],
       keylist: arr,
       capTags: tagArr,
-      scope: this.wechatScope
+      scope: this.wechatScope,
+      url: tempsend,
+      isInternalUrl: tempInternal
     }));
     //item.find(".c-show-template").html(this.tpl2(this.model.selected_model.toJSON()));
   },
@@ -332,7 +337,7 @@ var CreativeAssetsWeChatTemplateView = Backbone.View.extend({
     $(this.el).undelegate('.back_to_view', 'click');
   },
   saveNewTemplate: function() {
-    if( this.$('.c-show-url input[type="checkbox"]').is(':checked') == true) {
+    if( this.$('.wechatcheck input[type="checkbox"]').is(':checked') == true) {
       this.model.get('current_editing_template').get('file_service_params').Url = 'https://capillary.qxuninfo.com/webapi/WeixinOauth/Authorize?appid=wxdebdf3f10c2f33f8&callback=' + this.model.get('current_editing_template').get('file_service_params').Url + '&scope=snsapi_base';
     }
     var self = this;

@@ -1052,7 +1052,7 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
 		// 	$this->org_id,'WECHAT_TEMPLATE','WECHAT', 'GENERAL', 
 		// 	$_REQUEST['account_id']
 		// );
-		$wechat_templates = $this->C_assets->getAllOutboundTemplates(
+		$wechat_templates = $this->C_assets->getAllTemplates(
 			$this->org_id,'WECHAT_TEMPLATE','wechat_outbound', 'GENERAL', 
 			$_REQUEST['account_id']
 		);
@@ -1133,7 +1133,7 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
  	private function getAllWeChatTemplates(){
 
 		$this->C_assets = new CreativeAssetsManager();
-		$wechat_templates = $this->C_assets->getAllTemplates($this->org_id,'WECHAT_TEMPLATE','WECHAT', 'GENERAL', $_REQUEST['account_id']);
+		$wechat_templates = $this->C_assets->getAllTemplatesCreativeAssets($this->org_id,'WECHAT_TEMPLATE','WECHAT', 'GENERAL', $_REQUEST['account_id']);
 		foreach($wechat_templates as $k => $v){
 			$wechat_templates[$k]['html_content'] = $wechat_templates[$k]['content'] ;
 			$wechat_templates[$k]['tags'] =  $this->getAllWechatTags();
