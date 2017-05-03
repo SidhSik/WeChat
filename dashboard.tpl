@@ -1179,17 +1179,29 @@
 
       <div>
         <select style = "width:100%;" class="c-tag-<%-key.key%> c-selected-tag-box" wechat-tag-data="<%-key.key%>">
-          <!-- <option selected="selected" disabled>
+          <option  <%- (flag == 1)? 'selected': 'disabled' %> >
             <?= _campaign('Capillary Tags');?>
-          </option> -->
-        <% _.each(capTags,function(key1,val1){%>
-        <% if(key.val==capTags[val1]['value']){ %>  
-          <option selected="selected" id="<%-capTags[val1]['value']%>" value="<%-capTags[val1]['value']%>">
-            <%-capTags[val1]['label']%>
           </option>
+        <% _.each(capTags,function(key1,val1){%>
+        <% if(capTags[val1]['label'].indexOf('custom') != -1) { %>
+          <option disabled>
+            <%- capTags[val1]['label'] %>
+          </option>
+          <% _.each(capTags[val1]['value'], function(customKey,customVal){ %>
+            <% if(key.val==customKey){ %>
+              <option selected id="<%- customKey %>" value="<%- customKey %>"><%- customVal %></option>
+            <% }else{ %>
+              <option id="<%- customKey %>" value="<%- customKey %>"><%- customVal %></option>
+            <% } %>
+          <% }); %>
         <% }else{ %>
-          <option id="<%-capTags[val1]['value']%>" value="<%-capTags[val1]['value']%>"><%-capTags[val1]['label']%></option>
-        <% } %>
+          <% if(key.val==capTags[val1]['value']){ %> 
+            <option selected id="<%-capTags[val1]['value']%>" value="<%-capTags[val1]['value']%>">
+              <%-capTags[val1]['label']%>
+            </option>
+          <% }else{ %>
+            <option id="<%-capTags[val1]['value']%>" value="<%-capTags[val1]['value']%>"><%-capTags[val1]['label']%></option>
+          <% }} %>
         <% }); %>
         </select>
       </div>
@@ -1203,8 +1215,8 @@
   </div>
 
   <div class = "c-show-url wechatcheck">
-    <span style="clear:both; float:left; margin: 8px 0px 0px 22px;"><%='Is This Internal Url'%></span>
-    <input type="checkbox" style="margin-left: 23px;margin-top: 13px;" <%- (isInternalUrl == 1)? 'checked': '' %>/>
+    <span style="clear:both; float:left; margin: 8px 0px 0px 22px;"><%='Is this internal url'%></span>
+    <input type="checkbox" style="margin-left: 31px;margin-top: 13px;" <%- (isInternalUrl == 1)? 'checked': '' %>/>
   </div>
 
 </script>
@@ -1531,29 +1543,30 @@
     </div>
   </div>
 </script>
+
 <script id="single_image_broadcast_create_tpl" type="text/template">
   <div class="singleImageTemplatecontainer">
     <div>
     <!-- ashish -->
     <div class="title">
-    <% if(typeof data == 'undefined') { %>
+    <% if(typeof data.data == 'undefined') { %>
     <?= _campaign("New Single image Broadcast Template"); ?>
     <% } else { %>
     <?= _campaign("Edit Single image Broadcast Template"); ?>
     <% } %>
     </div>
     <div class="action">
-      <% if(typeof data == 'undefined') { %>
+      <% if(typeof data.data == 'undefined') { %>
       <button type="button" id="save_single_image_tpl" class="ca-g-btn btn"><?= _campaign('Save Template')?></button>
       <% } else { %>
-      <button type="button" id="update_single_image_tpl" data-template-id="<%=data.template_id%>" class="ca-g-btn btn"><?= _campaign('Update Template')?></button>
+      <button type="button" id="update_single_image_tpl" data-template-id="<%=data.data.template_id%>" class="ca-g-btn btn"><?= _campaign('Update Template')?></button>
       <% } %>
       <button type="button" id="preview_single_image_tpl" class="btn"><?= _campaign('Preview Template')?></button>
       <button type="button" id="cancel_single_image_tpl" class="btn"><?= _campaign('Cancel')?></button>
     </div>
   </div>
   <div class="templateForm">
-    <div id="template-name"><?= _campaign('Template Name')?> <input type="text" name="template_name" id="template_name" maxlength="25" value = "<%=(typeof data == 'object')? data.template_name:''%>" /></div>
+    <div id="template-name"><?= _campaign('Template Name')?> <input type="text" name="template_name" id="template_name" maxlength="25" value = "<%=(typeof data.data == 'object')? data.data.template_name:''%>" /></div>
     <div class="shellContainer">
       <div class="shellLeft">
         <div style="margin-top:15px;"><?= _campaign('Title')?></div>
@@ -1563,7 +1576,7 @@
       <div class="shell">
         <div class="shellBorder">
           <div>
-            <input type="text" maxlength="64" id="template_title" placeholder="<?= _campaign('Enter title here'); ?>" value = "<%=(typeof data == 'object')? data.title:''%>"/>
+            <input type="text" maxlength="64" id="template_title" placeholder="<?= _campaign('Enter title here'); ?>" value = "<%=(typeof data.data == 'object')? data.data.title:''%>"/>
           </div>
           <% var imgSrc = ((typeof data == 'object')? data.image:'')%>
           <div class="uploadPic upload_image_file">
@@ -1575,7 +1588,7 @@
             </div>
           </div>
           <div class="summary">
-            <textarea type="text" rows="3" maxlength="120" placeholder="Enter summary here" id="template_summary"><%=(typeof data == 'object')? data.summary:''%></textarea>
+            <textarea type="text" rows="3" maxlength="120" placeholder="Enter summary here" id="template_summary"><%=(typeof data.data == 'object')? data.data.summary:''%></textarea>
           </div>
         </div>
       </div>
@@ -1595,9 +1608,18 @@
         <textarea id="wechat_content" name="wechat_content" style="float: none;margin: 0 90px;display:none;">
         </textarea>
       </div>
+      <div class = "c-show-url">
+        <span style="clear:both; float:left; margin: 18px 0px 0px 2px;"><%='Link to details page'%></span>
+        <input type="text" class="c-input-width c-url-data-style c-input-tag-box c-tag-url" name="UrlName" wechat-tag-data="url" placeholder="http://" value="<%- (typeof data.data == 'undefined')? '' : data.url %>" style="width: 500px;margin: 14px 0 0 20px;" />
+      </div>
+      <div class = "c-show-url wechatcheck">
+        <span style="clear:both; float:left; margin: 8px 0px 0px 15px;"><%='Is this internal url'%></span>
+        <input type="checkbox" style="margin-left: 21px;margin-top: 13px;" <%- (data.isInternalUrl == 1)? 'checked': '' %>/>
+      </div>
     </div>
   </div>
 </script>
+
 <script id="single_image_preview_template" type="text/template">
   <div class="modal fade in" id="single_image_preview_modal">
   <div class="modal-header">
@@ -1627,24 +1649,24 @@
     <div>
     <!-- ashish -->
       <div class="title">
-        <% if(typeof data == 'undefined') { %>
+        <% if(typeof data.data== 'undefined') { %>
          <?= _campaign('New Multi image Broadcast Template')?>
         <% } else { %>
           <?= _campaign('Edit Multi image Broadcast Template')?>
         <% } %>
       </div>
       <div class="action">
-        <% if(typeof data == 'undefined') { %>
+        <% if(typeof data.data == 'undefined') { %>
         <button type="button" id="save_multi_image_tpl" class="ca-g-btn btn"><?= _campaign('Save Template')?></button>
         <% } else { %>
-        <button type="button" id="update_multi_image_tpl" data-template-id="<%=data.template_id%>" class="ca-g-btn btn"><?= _campaign('Update Template')?></button>
+        <button type="button" id="update_multi_image_tpl" data-template-id="<%=data.data.template_id%>" class="ca-g-btn btn"><?= _campaign('Update Template')?></button>
         <% } %>
         <button type="button" id="preview_multi_image_tpl" class="btn"><?= _campaign('Preview Template')?></button>
         <button type="button" id="cancel_multi_image_tpl" class="btn"><?= _campaign('Cancel')?></button>
       </div>
     </div>
     <div class="templateForm">
-    <div id="template-name"><?= _campaign('Template Name')?><input type="text" name="template_name" id="template_name" value="<%=(typeof data == 'object')? data.template_name:''%>"></div>
+    <div id="template-name"><?= _campaign('Template Name')?><input type="text" name="template_name" id="template_name" value="<%=(typeof data.data == 'object')? data.data.template_name:''%>"></div>
       <div class="shellContainer">
         <div class="shellLeft">
           <div class="hide" style="margin-top:15px;"><?= _campaign('Title')?></div>
@@ -1656,7 +1678,7 @@
               <input type="text" id="template_title" placeholder="<?= _campaign('Enter title here')?>" />
             </div>
             <div class="singlePicContainer">
-            <% if(typeof data == 'object') { var index = 1; _.each(data.singlePicData,function(value,key) {
+            <% if(typeof data.data == 'object') { var index = 1; _.each(data.data.singlePicData,function(value,key) {
             %>
               <div class="singlePic openSingleImageCatalogue" template="<%=index++%>" template-id="<%=value.template_id%>" qxun-template-id="<%=value.qXunTemplateId%>">
                 <div class="title"><%=value.title%></div>
@@ -1694,6 +1716,14 @@
         <div class="shellright">
           <div class="hide" style="margin-top:15px;">0/64 <?= _campaign('characters')?></div>
         </div>
+      </div>
+      <div class = "c-show-url">
+        <span style="clear:both; float:left; margin: 18px 0px 0px 2px;"><%='Link to details page'%></span>
+        <input type="text" class="c-input-width c-url-data-style c-input-tag-box c-tag-url" name="UrlName" wechat-tag-data="url" placeholder="http://" value="<%- (typeof data.data == 'undefined')? '' : data.url %>" style="width: 500px;margin: 14px 0 0 20px;" />
+      </div>
+      <div class = "c-show-url wechatcheck">
+        <span style="clear:both; float:left; margin: 8px 0px 0px 15px;"><%='Is this internal url'%></span>
+        <input type="checkbox" style="margin-left: 21px;margin-top: 13px;" <%- (data.isInternalUrl == 1)? 'checked': '' %>/>
       </div>
     </div>
   </div>

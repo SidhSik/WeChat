@@ -423,7 +423,7 @@
 		</div>
 		<div class="option_view">
 	    	<div class="btn-group btn-tablecell">
-	    		<a class="c-button-grey template_selected" context="creative_assets" data-animation="1" data-goto="4" type="WECHAT_TEMPLATE"><?= _campaign('Select')?></a>
+	    		<a class="c-button-grey template_selected" context="creative_assets" template-name='<%- model.template_name %>' data-animation="1" data-goto="4" type="WECHAT_TEMPLATE"><?= _campaign('Select')?></a>
 	      	</div>
 	    </div>
 	</div>
@@ -477,28 +477,8 @@
 		    <% }else{ %>
       		<div>
       			<div style = "width:100%;" class="c-tag-<%-key.key%> c-selected-tag-box" wechat-tag-data="<%-key.key%>">
-      			<% _.each(capTags,function(key1,val1){ %>
-      				<% if(key.val == capTags[val1]['value']){ %>
-      				<input type="text" class="c-input-width" id="<%-capTags[val1]['value']%>" value="<%-capTags[val1]['value']%>" disabled>
-      				<% }else{} %>
-      			<% }); %>
+              		<input type="text" class="c-input-width" id="<%- key.key %>" value="<%- key.val %>" disabled>
       			</div>
-        		<!-- <select style = "width:100%;" class="c-tag-<%-key.key%> c-selected-tag-box" wechat-tag-data="<%-key.key%>">
-          			<option selected="selected" disabled>
-            			<?= _campaign('Capillary Tags');?>
-          			</option>
-        		<%console.log(capTags); _.each(capTags,function(key1,val1){%>
-        			<% if(key.val==capTags[val1]['value']){ %>  
-          				<option selected="selceted" id="<%-capTags[val1]['value']%>" value="<%-capTags[val1]['value']%>">
-            				<%-capTags[val1]['label']%>
-          				</option>
-        			<% }else{ %> 
-          				<option id="<%-capTags[val1]['value']%>" value="<%-capTags[val1]['value']%>">
-          					<%-capTags[val1]['label']%>
-          				</option>
-        			<% } %>
-        		<% }); %>
-        		</select> -->
       		</div>
 			<% } %>
     	<% }); %>
@@ -510,7 +490,7 @@
   	</div>
 
   	<div class = "c-show-url">
-    	<span style="clear:both; float:left; margin: 8px 0px 0px 22px;"><%='Is This Internal Url'%></span>
+    	<span style="clear:both; float:left; margin: 8px 0px 0px 22px;"><%='Is this internal url'%></span>
     	<input type="checkbox" style="margin-left: 59px;margin-top: 13px;" disabled <%- (isInternalUrl == 1)? 'checked': '' %>/>
   	</div>
 </script>
@@ -527,7 +507,7 @@
 	    <div class="templateName hide"><%=model.template_name%></div>
 	    <div class="option_view">
 	    	<div class="btn-group btn-tablecell">
-	    		<a class="c-button-grey template_selected" context="creative_assets" data-animation="1" data-goto="4" type="WECHAT_SINGLE_TEMPLATE"><?= _campaign('Select')?></a>
+	    		<a class="c-button-grey template_selected" context="creative_assets" template-name='<%- model.title %>' data-animation="1" data-goto="4" type="WECHAT_SINGLE_TEMPLATE"><?= _campaign('Select')?></a>
 	      	</div>
 	    </div>
   	</div>
@@ -551,10 +531,22 @@
 	<% if(!model.isPreview) { %>
  		<div class="option_view">
       		<div class="btn-group btn-tablecell">
-      			<a class="c-button-grey template_selected" context="creative_assets"data-animation="1" data-goto="4" type="WECHAT_MULTI_TEMPLATE"><?= _campaign('Select')?></a>
+      			<a class="c-button-grey template_selected" context="creative_assets" template-name='<%- model.template_name %>' data-animation="1" data-goto="4" type="WECHAT_MULTI_TEMPLATE"><?= _campaign('Select')?></a>
       		</div>
  		</div>
  	<% } %>
+
+ 	<% if(renderLink){ %>
+	 	<div class = "c-show-url">
+	    	<span style="clear:both; float:left; margin: 30px 0px 0px -1px;text-align: center"><%='Link to details page'%></span>
+	    	<input type="text" class="c-input-width c-url-data-style c-input-tag-box c-tag-url" name="UrlName" wechat-tag-data="url" placeholder="http://" value="<%- url %>" style="width: 500px;margin: 25px 0 0 24px;" disabled/>
+	  	</div>
+
+	  	<div class = "c-show-url">
+	    	<span style="clear:both; float:left; margin: 8px 0px 0px 12px;"><%='Is this internal url'%></span>
+	    	<input type="checkbox" style="margin-left: 25px;margin-top: 13px;" disabled <%- (isInternalUrl == 1)? 'checked': '' %>/>
+	  	</div>
+	<% } %>
  	</div>
 </script>
 
@@ -657,6 +649,15 @@
 		        	<iframe src = "<%='data:text/html;charset=utf-8,' + (model.content.content)%>"></iframe>
 		        </div>
       		</div>
+      		<div class = "c-show-url">
+		    	<span style="clear:both; float:left; margin: 18px 0px 0px 6px;text-align: center"><%='Link to details page'%></span>
+		    	<input type="text" class="c-input-width c-url-data-style c-input-tag-box c-tag-url" name="UrlName" wechat-tag-data="url" placeholder="http://" value="<%- url %>" style="width: 500px;margin: 14px 0 0 29px;" disabled/>
+		  	</div>
+
+		  	<div class = "c-show-url">
+		    	<span style="clear:both; float:left; margin: 8px 0px 0px 19px;"><%='Is this internal url'%></span>
+		    	<input type="checkbox" style="margin-left: 30px;margin-top: 13px;" disabled <%- (isInternalUrl == 1)? 'checked': '' %>/>
+		  	</div>
    		</div>
   	</div>
 </script>

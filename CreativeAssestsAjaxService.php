@@ -145,9 +145,9 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
 				break;
 
 			case 'get_all_mobile_push_templates':
-				  $this->logger->debug('get all mobile push templates');
+				$this->logger->debug('get all mobile push templates');
 			    $this->getAllMobilePushTemplates();
-			    break;	
+			    break; 
 			case 'get_mobile_push_templates_by_accountid':
 				  $this->logger->debug('get all mobile push templates by accountId');
 				  $account_id = $_GET['account_id'];
@@ -160,6 +160,11 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
 			    $this->getAllWeChatTemplates();
 			    $this->logger->debug('get all wechat templates');
 			    break;
+
+			case 'get_wechat_content_by_org':
+				$this->getWeChatContentByOrg();
+				$this->logger->debug('get all wechat org content');
+				break;
 
 		    case 'get_all_wechat_single_image_templates':
 			    $this->getAllWeChatSingleImageTemplates();
@@ -270,6 +275,7 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
 	  	'TemplateName' => $_REQUEST['TemplateName'],
 	  	'TemplateIds' => $_REQUEST['TemplateIds'],
 	  	'ArticleIds' => $_REQUEST['ArticleIds'],
+	  	'url' => $_REQUEST['url'],
 	  	'AppId' => $_REQUEST['AppId'],
 	  	'AppSecret'=> $_REQUEST['AppSecret'],
 	  	'OrignalId' => $_REQUEST['OrignalId'],
@@ -319,6 +325,7 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
 		  	'image' => $_REQUEST['image'],
 		  	'summary' => $_REQUEST['summary'],
 		  	'content' => $_REQUEST['content'],
+		  	'url' => $_REQUEST['url'],
 		  	'template_name' => $_REQUEST['name'],
 		  	'AppId' => $_REQUEST['AppId'],
 		  	'AppSecret'=> $_REQUEST['AppSecret'],
@@ -893,9 +900,9 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
  			$tag = 'GENERAL';
  		} else {
  			$content = $this->sanitizeRequest(
-                    array('html_content' => html_entity_decode($params['html_content']))
+                    array('html_content' => html_entity_decode($params['html_content'],ENT_COMPAT,'UTF-8'))
                 );
-        	$file_content = htmlentities($content['html_content']);
+        	$file_content = htmlentities($content['html_content'],ENT_COMPAT,'UTF-8');
  		}
 
  		if(isset($params['is_favourite']) && $params['is_favourite']=="true"){
@@ -928,6 +935,10 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
  			$this->data['error'] = $e->getMessage();
  		}
  		
+ 	}
+
+ 	private function getWeChatContentByOrg(){
+ 		$this->data['weChatOrgData'] = $this->getWeChatAccounts($this->org_id);
  	}
 
  	private function getWeChatContentTemplates(){
@@ -1133,17 +1144,36 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
  	private function getAllWeChatTemplates(){
 
 		$this->C_assets = new CreativeAssetsManager();
-		$wechat_templates = $this->C_assets->getAllTemplatesCreativeAssets($this->org_id,'WECHAT_TEMPLATE','WECHAT', 'GENERAL', $_REQUEST['account_id']);
-		foreach($wechat_templates as $k => $v){
-			$wechat_templates[$k]['html_content'] = $wechat_templates[$k]['content'] ;
-			$wechat_templates[$k]['tags'] =  $this->getAllWechatTags();
-			$wechat_templates[$k]['name'] = $wechat_templates[$k]['template_name'] ;
-			unset($wechat_templates[$k]['content']);
-			unset($wechat_templates[$k]['template_name']);
-			if($wechat_templates[$k]['is_favourite']=="0"){
-				$wechat_templates[$k]['is_favourite'] = false;
-			}else{
-				$wechat_templates[$k]['is_favourite'] = true;
+		$params = $_GET;
+		$scope = $params['scope'];
+		$acc_id = $_GET['account_id'];
+		if(strcasecmp("wechat_dvs", $scope)==0 || strcasecmp("wechat_loyalty", $scope)==0){
+			$wechat_templates = $this->C_assets->getAllTemplates($this->org_id,'WECHAT_TEMPLATE',$scope, 'GENERAL', $acc_id);
+			foreach($wechat_templates as $k => $v) {
+				$wechat_templates[$k]['html_content'] = $wechat_templates[$k]['content'] ;
+				$wechat_templates[$k]['tags'] =  $this->getAllWechatTags();
+				$wechat_templates[$k]['name'] = $wechat_templates[$k]['template_name'] ;
+				unset($wechat_templates[$k]['content']);
+				unset($wechat_templates[$k]['template_name']);
+				if($wechat_templates[$k]['is_favourite']=="0"){
+					$wechat_templates[$k]['is_favourite'] = false;
+				}else{
+					$wechat_templates[$k]['is_favourite'] = true;
+				}
+			}
+		}else {
+			$wechat_templates = $this->C_assets->getAllTemplatesCreativeAssets($this->org_id,'WECHAT_TEMPLATE','WECHAT', 'GENERAL', $_REQUEST['account_id']);
+			foreach($wechat_templates as $k => $v){
+				$wechat_templates[$k]['html_content'] = $wechat_templates[$k]['content'] ;
+				$wechat_templates[$k]['tags'] =  $this->getAllWechatTags();
+				$wechat_templates[$k]['name'] = $wechat_templates[$k]['template_name'] ;
+				unset($wechat_templates[$k]['content']);
+				unset($wechat_templates[$k]['template_name']);
+				if($wechat_templates[$k]['is_favourite']=="0"){
+					$wechat_templates[$k]['is_favourite'] = false;
+				}else{
+					$wechat_templates[$k]['is_favourite'] = true;
+				}
 			}
 		}
 
@@ -1196,7 +1226,7 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
  		$this->logger->debug('checking value whether its empty'.print_r($params,true));
  		foreach ($params['file_service_params']['Data'] as $row) {
 			$this->logger->debug('checking value whether its empty'.print_r($row['Value'],true));
- 			if(empty($row['Value'])){
+ 			if(empty($row['Value']) || strcasecmp( "Capillary Tags",$row['Value'])==0 ){
  				$this->data['error'] = _campaign("Please fill the required fields");
  				return;
  			}
@@ -1271,8 +1301,9 @@ class CreativeAssestsAjaxService extends BaseAjaxService{
  			}
  			
  			$content = $this->C_assets->getDetailsByTemplateId( $template_id );
+ 			$this->logger->debug('@@@Inside message preview method content template id db'.print_r($content,true));
  			$this->data['html'] =  htmlspecialchars_decode(stripcslashes( $content['content'] ));
- 		
+			$this->logger->debug('@@@Inside message preview method content template id decoded data'.print_r($this->data['html'],true));		
  		} catch ( Exception $e ) {
  			$this->data['error'] = $e->getMessage();
  		} 		

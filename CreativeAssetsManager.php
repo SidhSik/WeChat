@@ -462,7 +462,7 @@ class CreativeAssetsManager{
 					JOIN `creative_assets`.`org_templates` ot
 						ON ot.org_id = '$org_id' AND t.id = ot.template_id AND ot.`ref_id` = '$account_id'
 				WHERE t.`template_type_id` = '$template_type_id' AND t.`is_deleted` = '0' 
-					AND t.`scope` = '$scope' $where_filter ORDER BY t.`last_updated_on` DESC ";		
+					AND t.`scope` = '$scope' $where_filter ORDER BY t.`last_updated_on` DESC ";
 
 		$result = $this->C_database->query( $sql );
 		$this->logger->debug("@@#######sikricreativeassetsmanager".print_r( $result , true ) );
@@ -519,6 +519,10 @@ class CreativeAssetsManager{
 	public function getAllTemplatesCreativeAssets( $org_id , $asset_type = 'HTML' , $scope = 'ORG', $tag = 'GENERAL' , $account_id = -20 ){
 		// $org_id = 780;
 	
+		if(strcasecmp("wechat_dvs",$scope)==0 || strcasecmp("wechat_loyalty",$scope)==0){
+			return $this->getAllTemplates($org_id, $asset_type, $scope, $tag, $account_id);
+		}
+
 		$types = $this->getTemplateTypesAsOption();
 	
 		$template_type_id = $types[ strtoupper($asset_type) ];

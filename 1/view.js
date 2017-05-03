@@ -289,44 +289,67 @@ var app = app || {};
         ca_wechat.helper.showFlash(_campaign('Select atleast 2 templates'), true);
         return false;
       }
-      $('.wait_initial_form').show().addClass('intouch-loader');
       var template_id = $(e.currentTarget).data('template-id');
       var that = this;
-      var templateJson = {};
-      var choosenTemplates = {
-        templateIds: '',
-        qxunTemplateIds: ''
-      };
-      $('.multiImageTemplatecontainer:visible .singlePic').each(function() {
-        if ($(this).attr('template-id')) {
-          choosenTemplates.qxunTemplateIds += $(this).attr('qxun-template-id') + ',';
-          choosenTemplates.templateIds += $(this).attr('template-id') + ',';
-        }
-      });
-      choosenTemplates.qxunTemplateIds = choosenTemplates.qxunTemplateIds.slice(0, -1);
-      choosenTemplates.templateIds = choosenTemplates.templateIds.slice(0, -1);
-      templateJson = {
-        'TemplateName': $('#template_name').val(),
-        'ArticleIds': choosenTemplates.qxunTemplateIds,
-        'TemplateIds': choosenTemplates.templateIds,
-        'AppId': $('#wechat-accounts option:selected').data('app_id'),
-        'AppSecret': $('#wechat-accounts option:selected').data('app_secret'),
-        'OrignalId': $('#wechat-accounts option:selected').data('original_id'),
-        'BrandId': $('#wechat-accounts option:selected').data('brand_id'),
-        'AccountId': $('#wechat-accounts option:selected').val(),
-        'template_id': template_id,
-      };
-      $.ajax({
-        url: '/xaja/AjaxService/assets/save_multi_image_broadcast.json',
-        type: 'POST',
-        data: templateJson,
-        success: function(data) {
-          $('.wait_initial_form').show().removeClass('intouch-loader');
-          that.loadMultiImage(true);
-        },
-        error: function(jqXHR, textStatus) {
-          console.log('error', textStatus);
-          $('.wait_initial_form').show().removeClass('intouch-loader');
+      $('.wait_initial_form').show().addClass('intouch-loader');
+
+      $.ajax({url: '/xaja/AjaxService/assets/get_wechat_content_by_org.json',
+        dataType: 'json',
+        success: function(res){
+          console.log(res);
+          var brandId = $('#wechat-accounts option:selected').data('brand_id');
+          for(i=0; i<res.weChatOrgData.length; i++){
+            if( res.weChatOrgData[i]['brand_id'] == brandId){
+              break;
+            }
+          }
+          if( that.$('.wechatcheck input[type="checkbox"]').is(':checked') == true) {
+            that.tempUrl = 'https://capillary.qxuninfo.com/webapi/WeixinOauth/Authorize?appid=' +res.weChatOrgData[i].wechat_app_id+  '&callback=' + encodeURIComponent(that.$('.c-show-url input[type="text"]').val()) + '?original_id=' + res.weChatOrgData[i].original_id + '&scope=snsapi_base';
+          }else{
+            that.tempUrl = that.$('.c-show-url input[type="text"]').val();
+          }
+
+          // var template_id = $(e.currentTarget).data('template-id');
+          // var that = this;
+          var templateJson = {};
+          var choosenTemplates = {
+            templateIds: '',
+            qxunTemplateIds: ''
+          };
+          $('.multiImageTemplatecontainer:visible .singlePic').each(function() {
+            if ($(that).attr('template-id')) {
+              choosenTemplates.qxunTemplateIds += $(that).attr('qxun-template-id') + ',';
+              choosenTemplates.templateIds += $(that).attr('template-id') + ',';
+            }
+          });
+          choosenTemplates.qxunTemplateIds = choosenTemplates.qxunTemplateIds.slice(0, -1);
+          choosenTemplates.templateIds = choosenTemplates.templateIds.slice(0, -1);
+          templateJson = {
+            'TemplateName': $('#template_name').val(),
+            'ArticleIds': choosenTemplates.qxunTemplateIds,
+            'TemplateIds': choosenTemplates.templateIds,
+            'url': that.tempUrl,
+            'AppId': $('#wechat-accounts option:selected').data('app_id'),
+            'AppSecret': $('#wechat-accounts option:selected').data('app_secret'),
+            'OrignalId': $('#wechat-accounts option:selected').data('original_id'),
+            'BrandId': $('#wechat-accounts option:selected').data('brand_id'),
+            'AccountId': $('#wechat-accounts option:selected').val(),
+            'template_id': template_id,
+          };
+
+          $.ajax({
+            url: '/xaja/AjaxService/assets/save_multi_image_broadcast.json',
+            type: 'POST',
+            data: templateJson,
+            success: function(data) {
+              $('.wait_initial_form').show().removeClass('intouch-loader');
+              that.loadMultiImage(true);
+            },
+            error: function(jqXHR, textStatus) {
+              console.log('error', textStatus);
+              $('.wait_initial_form').show().removeClass('intouch-loader');
+            }
+          });
         }
       });
     },

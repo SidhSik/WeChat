@@ -703,12 +703,12 @@ couponSeriesView = Backbone.View.extend({
         that.renderGenericDetails(inc_elems);
         that.model.setCache('coupon_attached', 1);
         //hiding coupon and points
-        $('.coupon_div').addClass('hide');
-        $('.points_div').addClass('hide');
-        $('#show_coupon_button').hide();
+        // $('.coupon_div').addClass('hide');
+        // $('.points_div').addClass('hide');
+        // $('#show_coupon_button').hide();
         $('#coupon_org_id').val(response.attributes.c_org_id);
-        $('#points_details').addClass('hide');
-        $('#coupon_details').addClass('hide');
+        // $('#points_details').addClass('hide');
+        // $('#coupon_details').addClass('hide');
         $('#attach-incentive').addClass('intouch-green-tick-active');
         //check if coupon series is attached to this campaign
         if (details.no_coupon_series > 0) {
@@ -719,8 +719,8 @@ couponSeriesView = Backbone.View.extend({
         } else {
           that.model.setCache('voucher_series_id', -1);
         }
-        $('#points_details').addClass('hide');
-        $('#coupon_details').addClass('hide');
+        // $('#points_details').addClass('hide');
+        // $('#coupon_details').addClass('hide');
         $('#attach-incentive').addClass('intouch-green-tick-active');
         //check if points has been saved for this campaign 
         if (details.points_info.is_first_time) {
@@ -1100,6 +1100,7 @@ couponSeriesView = Backbone.View.extend({
     $(e.currentTarget).addClass('intouch-green-tick-active');
     $('#points_details').addClass('hide');
     $('#coupon_details').addClass('hide');
+    $('#coupon_new_create').slideUp();
     $("#generic_details").removeClass('hide');
   },
   chooseEmptyAlloc: function(e) {
@@ -1321,6 +1322,7 @@ couponSeriesView = Backbone.View.extend({
           $('#coupon-series-container').hide();
           $('.coupon_div').hide();
           $('.points_div').hide();
+          $('.generic_div').hide();
           $('#configure_coupon_series').show();
           $('a#next-button-action').hide();
           var edit = decodeURIComponent(response.toJSON().edit_coupon_html);
@@ -1414,6 +1416,7 @@ couponSeriesView = Backbone.View.extend({
     $('.coupon_details').show();
     $('.coupon_div').show();
     $('.points_div').show();
+    $('.generic_div').show();
     $('#coupon-series-container').show();
     $('#a_c_series').removeClass('hide');
     $('#c_c_series').addClass('hide');
@@ -1483,7 +1486,8 @@ templateView = Backbone.View.extend({
     });
     _.each(multiPicTemplates, function(template) {
       templateMultiListHtml += _.template($('#wechat_multipic_tpl').html())({
-        model: template
+        model: template,
+        renderLink: false
       });
     });
     this.$el.find('.ca_all_container_body').find('.ca_spic_container_body').html(templateListHtml);
@@ -1732,8 +1736,17 @@ editTempalteView = Backbone.View.extend({
         _.extend(templateData['0'], {
           isPreview: true
         });
+
+        var tempstr = templateData[0].content.url;
+        var tempurl = tempstr.substring(tempstr.indexOf("callback="),tempstr.indexOf("?original_id")).split('=')[1];
+        var tempsend = (tempstr!='{{wechat_service_acc_url}}') ? ( (tempstr.indexOf("&callback=") == -1) ? tempstr : tempurl  ) : '';
+        var tempInternal = (tempstr.indexOf("&callback=") == -1) ? 0 : 1;
+
         this.$el.find('#content_div_4').html(_.template($('#wechat_multipic_tpl').html())({
-          model: templateData['0']
+          model: templateData['0'],
+          renderLink: true,
+          url: decodeURIComponent(tempsend),
+          isInternalUrl: tempInternal
         }));
         break;
       case 'WECHAT_TEMPLATE':
@@ -1761,53 +1774,32 @@ editTempalteView = Backbone.View.extend({
         }));
         var item = this.$el.find('.c-show-template');
 
-        $.ajax({url: '/xaja/AjaxService/assets/get_all_tags.json',
-          dataType: 'json',
-          success: function(result){
-            switch(templateData.scope){
-              case 'wechat_outbound':
-                obj = result.tags['OUTBOUND'];
-                break;
-              case 'wechat_dvs':
-                obj = result.tags['DVS'];
-                break;
-              case 'wechat_loyalty':
-                obj = result.tags['WECHAT'];
-                break;
-              default:
-                obj = result.tags['OUTBOUND'];
-            }
-            var tagArr = [];
-            for (var prop in obj) {
-              if (obj.hasOwnProperty(prop)) {
-                tagArr.push({
-                  label: prop,
-                  value: obj[prop]
-                });
-              }
-            }
+        var tempstr = templateData.templates1[0]['Url'];
+        var tempurl = tempstr.substring(tempstr.indexOf("callback="),tempstr.indexOf("&scope")).split('=')[1];
+        var tempsend = (tempstr!='{{wechat_service_acc_url}}') ? ( (tempstr.indexOf("&callback=") == -1) ? tempstr : tempurl  ) : '';
+        var tempInternal = (tempstr.indexOf("&callback=") == -1) ? 0 : 1;
 
-            var tempstr = templateData.templates1[0]['Url'];
-            var tempurl = tempstr.substring(tempstr.indexOf("callback="),tempstr.indexOf("&scope")).split('=')[1];
-            var tempsend = (tempstr!='{{wechat_service_acc_url}}') ? ( (tempstr.indexOf("&callback=") == -1) ? tempstr : tempurl  ) : '';
-            var tempInternal = (tempstr.indexOf("&callback=") == -1) ? 0 : 1;
-
-            item.html(_.template($('#details_tpl').html())({
-              temp: templateData.templates1['0'],
-              keylist: arr,
-              capTags: tagArr,
-              url: tempsend,
-              isInternalUrl: tempInternal
-            }));
-          }
-        });
+        item.html(_.template($('#details_tpl').html())({
+          temp: templateData.templates1['0'],
+          keylist: arr,
+          url: decodeURIComponent(tempsend),
+          isInternalUrl: tempInternal
+        }));
         break;
       case 'WECHAT_SINGLE_TEMPLATE':
         var templateData = _.where(this.model.get('templates').single, {
           template_id: this.model.getCache('selectedTemplate')
         });
+
+        var tempstr = templateData[0].content.url;
+        var tempurl = tempstr.substring(tempstr.indexOf("callback="),tempstr.indexOf("?original_id")).split('=')[1];
+        var tempsend = (tempstr!='{{wechat_service_acc_url}}') ? ( (tempstr.indexOf("&callback=") == -1) ? tempstr : tempurl  ) : '';
+        var tempInternal = (tempstr.indexOf("&callback=") == -1) ? 0 : 1;
+
         this.$el.find('#content_div_4').html(_.template($('#preview_wechat_single_tpl').html())({
-          model: templateData['0']
+          model: templateData['0'],
+          url: decodeURIComponent(tempsend),
+          isInternalUrl: tempInternal
         }));
         break;
     }
@@ -2181,7 +2173,7 @@ deliveryView = Backbone.View.extend({
         qIDs = $('#template_selected').attr('article-id');
         params.singleImageTemplateIds = $('#template_selected').attr('single-image-template-id');
         _.extend(params,{
-          message: '{"BrandId": "' + accountDetails.brand_id + '","PushName": "' + $("#msg_template_type").val() + '","Content": "' + qIDs + '","PushType": "3","PushInfo": "{OPENID}"}{{wechat}}'
+          message: '{"BrandId": "' + accountDetails.brand_id + '","PushName": "' + $("#msg_template_type").val() + '","Content": "' + qIDs + '","Url": "' + this.model.get('content').url + '","PushType": "3","PushInfo": "{OPENID}"}{{wechat}}'
         });
         break;
       case "WECHAT_TEMPLATE":
@@ -2223,7 +2215,7 @@ deliveryView = Backbone.View.extend({
         break;
       case "WECHAT_SINGLE_TEMPLATE":
         _.extend(params,{
-          message: '{"BrandId": "' + accountDetails.brand_id + '","PushName": "' + $("#msg_template_type").val() + '","Content": "' + qIDs + '","PushType": "3","PushInfo": "{OPENID}"}{{wechat}}'
+          message: '{"BrandId": "' + accountDetails.brand_id + '","PushName": "' + $("#msg_template_type").val() + '","Content": "' + qIDs + '","Url": "' + this.model.get('content').url + '","PushType": "3","PushInfo": "{OPENID}"}{{wechat}}'
         });
         break;
     }
