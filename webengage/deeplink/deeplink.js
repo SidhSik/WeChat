@@ -4,7 +4,8 @@ $(document).ready(function(){
 		var keyIdPrefix = $(e.currentTarget).parents('.add_deep_links').attr('id');
 		var keyId = $(e.currentTarget).attr('id');
 		var keyIndex = $(e.currentTarget).attr('id').substr(keyId.indexOf('_')+1);
-		var html = "<input type='text' id=" + keyIdPrefix + "_key_" + keyIndex + "/>";
+		var html = "<input type='text' id=" + keyIdPrefix + "_key_" + keyIndex + "/>" +
+					"<i class='fa fa-times'></i>";
 		$(e.currentTarget).siblings('div#keysGoHere').append(html+'&nbsp;');
 		$(e.currentTarget).attr({
 			id: 'key_'+(parseInt(keyIndex)+1)
@@ -34,6 +35,3 @@ $(document).ready(function(){
 	});
 
 });
-
-
-
