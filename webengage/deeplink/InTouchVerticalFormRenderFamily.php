@@ -6,6 +6,7 @@
  *
  *Creats In Touch Style Vertical Form 
  */
+
 class InTouchVerticalFormRenderFamily{
         
         private $table_align;	
@@ -75,7 +76,8 @@ class InTouchVerticalFormRenderFamily{
 	 * Returns the html for the form
 	 */
 	public function getHtml(){
-		
+		include_once 'module/template/campaigns/v3/deeplink.tpl';
+
 		$div_name = $this->form_widget->getDivName();
 		$enctype = $this->form_widget->getEnctype();
 		$method = $this->form_widget->getFormMethod();
@@ -141,22 +143,10 @@ class InTouchVerticalFormRenderFamily{
 
 			if( strcasecmp($field_label, 'IOS')==0 ){
 				echo "PHPPPP";
-				// $str .= "<div class='container' style='flex:inline;'>
-				// 			<div class='field_label'>Deep Link</div>
-				// 			<div class='borderBox'>
-				// 				<div id='border' style='width:100px;height:100px;border:1px solid lightgrey'></div>
-				// 			</div>
-				// 		</div>";
 				$str .= "<tr>
 							<td>Deep Link</td>
 							<td>
-								<div class='add_deep_links'>+ Add Deep Links</div>
-							</td>
-						</tr>
-						<tr>
-							<td></td>
-							<td>
-								<div class='add_more_deep_links hide'>+ Add Deep Links</div>
+								<div id='deeplink_1' class='add_deep_links'>+ Add Deep Links</div>
 							</td>
 						</tr>";
 			}

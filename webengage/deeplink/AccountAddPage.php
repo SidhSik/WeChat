@@ -15,7 +15,12 @@ class AccountAddPage extends IFramePage{
 		
 		$script = 
 			"<link rel='stylesheet' href='$prefix/style/campaign/campaign_media_ui.css$css_version' type='text/css' />
-			<script type='text/javascript' src='/js/campaign/deeplink.js$js_version'></script>";
+			<link rel='stylesheet' href='$prefix/style/campaign/FortAwesome/css/font-awesome.css' type='text/css' />
+			<link rel='stylesheet' href='http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css' type='text/css'>
+			<script type='text/javascript' src='/js/campaign/deeplink.js$js_version'></script>
+			<script type='text/javascript'' src='/js/campaign/backbone/underscore-min.js'></script>
+			<script type='text/javascript' src='/js/campaign/backbone/backbone-min.js'></script>
+			<script type='text/javascript' src='/js/campaign/backbone/backbone.localStorage.js'></script>";
 
 		$this->includeRequiredScripts( $script );
 	}
