@@ -891,7 +891,7 @@ hr.line_6{
 }
 
 .hide{
-	display: none;
+	display: none !important;
 }
 
 .textCenter{
@@ -905,7 +905,7 @@ hr.line_6{
 
 .deeplink{
 	width: 500px;
-	height: 180px;
+	height: 220px;
 	border: 1px solid lightgrey;
 	display: flex;
 	flex-direction: column;
@@ -925,5 +925,47 @@ hr.line_6{
 }
 
 .deeplname{
+	height: 27px;
 	padding-top: 10px;
+}
+
+.deepllink{
+	height: 27px;
+    padding-top: 6px;
+}
+
+.deeplkeys{
+	/*height: 115px;*/
+    padding-top: 6px;
+    padding-bottom: 5px;
+    /*overflow-x: auto;
+	overflow-y: auto;
+	white-space: nowrap;*/
+}
+
+.deeplfooter{
+    height: 24px;
+    padding-bottom: 5px;
+}
+
+.deeplink_key_container{
+	/*border: 1px solid lightgrey;*/
+	width: 89%;
+}
+
+#keysGoHere{
+	display: flex;
+	flex-direction: column;
+/*	height: 93px;
+	overflow-x: auto;
+    overflow-y: auto;
+    white-space: nowrap;*/
+}
+
+.deeplink_addkey{
+	height: 18px;
+}
+.deeplink_addkey:hover, .deepadd:hover{
+	cursor: pointer;
+	color: rgb(0, 161, 255);
 }
