@@ -905,11 +905,11 @@ hr.line_6{
 
 .deeplink{
 	width: 500px;
-	height: 220px;
+	max-height: 220px;
 	border: 1px solid lightgrey;
 	display: flex;
 	flex-direction: column;
-	overflow-x: auto;
+	/*overflow-x: auto;*/
 	overflow-y: auto;
 	white-space: nowrap;
 }
@@ -968,4 +968,14 @@ hr.line_6{
 .deeplink_addkey:hover, .deepadd:hover{
 	cursor: pointer;
 	color: rgb(0, 161, 255);
+	text-decoration: underline;
+}
+
+i:hover{
+	cursor: pointer;
+	color: rgb(0, 161, 255);
+}
+
+.no-pointer-events {
+  pointer-events: none!important;
 }

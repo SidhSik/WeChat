@@ -141,10 +141,9 @@ class InTouchVerticalFormRenderFamily{
 			if( $error_code )
 				$str .= "<small class='error'>$error_code</small>";
 
-			if( strcasecmp($field_label, 'IOS')==0 ){
-				echo "PHPPPP";
+			if( strcasecmp($field_label, 'Previous Deep Links')==0 ){
 				$str .= "<tr>
-							<td style='vertical-align:top;'>Deep Link</td>
+							<td style='vertical-align:top;'>Add Deep Links</td>
 							<td>
 								<div id='deeplink_1' class='add_deep_links deepadd'>+ Add Deep Links</div>
 							</td>
