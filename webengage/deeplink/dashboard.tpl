@@ -2342,6 +2342,7 @@
                 if(!_.isUndefined(template.html_content.ANDROID.cta) &&
                     template.html_content.ANDROID.cta.type=="DEEP_LINK"){
                  var deepActionLink = template.html_content.ANDROID.cta.actionLink;
+                 var deepName = template.html_content.ANDROID.cta.deepLinkName;
                 }
                if(!_.isUndefined(template.html_content.ANDROID.cta) &&
                     template.html_content.ANDROID.cta.type=="EXTERNAL_URL"){
@@ -2354,6 +2355,7 @@
               if(!_.isUndefined(template.html_content.IOS.cta) &&
                   template.html_content.IOS.cta.type=="DEEP_LINK"){
                 var deepActionLink = template.html_content.IOS.cta.actionLink;
+                var deepName = template.html_content.ANDROID.cta.deepLinkName;
                 }
             if(!_.isUndefined(template.html_content.IOS.cta) &&
                 template.html_content.IOS.cta.type=="EXTERNAL_URL"){
@@ -2362,26 +2364,77 @@
               }
               }  
 
-              if(deepActionLink)
+              if(deepActionLink){
                 var actionLink =  deepActionLink;
+                var selectKeyBool = (actionLink.indexOf('?') == -1)?true:false;
+                var deepNameBool = _.isEmpty(deepName) || _.isUndefined(deepName);
+                if(selectKeyBool){
+                  var linkName = actionLink;
+                }else{
+                  [linkName,temp1] = actionLink.split('?');
+                }
+                var keys = [];
+                var values = [];
+                if(temp1.indexOf('&')==-1){
+                  [k,v] = temp1.split('=');
+                  keys.push(k);
+                  values.push(v);
+                }else{
+                  _.each( a.split('&'), function(k,v){
+                      [c,d] = k.split('=');
+                      keys.push(c);
+                      values.push(d);
+                  });
+                }
+              }
               if(externalActionLink)
-                var  actionLink = externalActionLink;            
+                var actionLink = externalActionLink;        
              %> 
 
-             <% if( deepLink == 'DEEP_LINK'){ %>
-           <select class="deeplinkSelectBox" style="width: 480px;">
-             <option selected>
+             
+            <select class="deeplinkSelectBox <% if(deepActionLink){}else{ %> hideMe <% } %> " style="width: 480px;" hidden-by="">
+             <option <%- (deepNameBool)?'selected':'' %> >
                <?= _campaign("Select a deeplink"); ?>
              </option>
                 <% _.each(rc.deeplinks, function(val,key) { %>
-                  <option id=<%- key %> value=<%- val.name %> > <%- val.name %> </option>
+                  <option id="<%= key %>" value="<%= val.name %>" <% if(deepActionLink){ (val.name == deepName)?'selected':'';} %> > <%- val.name %> </option>
                 <% }); %>
-           </select>
-           <input type="text" class="hideMe" style="width: 480px;">
-           <div class="deepLinkSelectKeys hideMe">Select Keys (Optional)</div>
-           <% }else{ %>
-         <input type="text" id="ca-mobile-push-primary" class="ca-mobile-push-text ca-mobile-push-text-link" ca-mobile-push-primary-deep-link-android="<%= deepActionLink %>" ca-mobile-push-primary-external-link-android="<%= externalActionLink %>" ca-mobile-push-primary-deep-link-ios="<%= deepActionLink %>" ca-mobile-push-primary-external-link-ios="<%= externalActionLink %>"  value="<%= actionLink %>">
-          <% } %>
+            </select>
+            <input type="text" class="<%- (deepNameBool)?'hideMe':'' %> deepLinkBox" style="width: 480px;" hidden-by="deep-link" value="<%- (deepNameBool)?'':linkName %>" disabled>
+            <div class="deepLinkSelectKeys hideMe" hidden-by="deep-link">Select Keys (Optional)</div>
+            <div class="showKeysForSavedDeepLink <%- (deepNameBool)?'hideMe':'' %>">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col" class="rounded-company" style="text-align: start;">&nbsp;Selected Keys</th>
+                    <th scope="col" class="rounded-q4" style="text-align: start;">&nbsp;Value</th>
+                  </tr>
+                </thead>
+                <tfoot>
+                  <tr>
+                    <td class="rounded-foot-left">&nbsp;</td>
+                    <td class="rounded-foot-right">&nbsp;</td>
+                  </tr>
+                </tfoot>
+                <tbody>
+                  <% if(!_.isEmpty(keys)){ %>
+                    <% for(i=0; i<keys.length; i++){ %>
+                        <tr>
+                          <td style="width: 240px;">
+                            <input type="checkbox" id="<%= deepName %>" value="<%= keys[i] %>" checked disabled> <%= keys[i] %>
+                          </td>
+                          <td style="width: 240px;">
+                            <input type="text" value="<%= values[i] %>">
+                          </td>
+                        </tr>
+                    <% } %>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+           
+         <input type="text" id="ca-mobile-push-primary" class="ca-mobile-push-text ca-mobile-push-text-link <% if(externalActionLink){}else{ %> hideMe <% } %> " ca-mobile-push-primary-deep-link-android="<%= deepActionLink %>" ca-mobile-push-primary-external-link-android="<%= externalActionLink %>" ca-mobile-push-primary-deep-link-ios="<%= deepActionLink %>" ca-mobile-push-primary-external-link-ios="<%= externalActionLink %>"  value="<%= actionLink %>">
+          
           </div>
         </div>
         <br>
@@ -2527,23 +2580,20 @@
 </script>
 
 <script id="deepLinkKeyTable" type="text/template">
-  <table id="deepKeyTable">
+  <table id="deepKeyTable" hidden-by="deep-link">
     <thead>
       <tr>
-        <th scope='col' class='rounded-company'>&nbsp;Key</th>
-        <th scope='col' class='rounded-q4'>&nbsp;Value</th>
+        <th scope="col" class="rounded-company" style="text-align: start;">&nbsp;Key</th>
+        <th scope="col" class="rounded-q4" style="text-align: start;">&nbsp;Value</th>
       </tr>
     </thead>
     <tbody>
       <% _.each(rc.deepKeys, function(val,k){ %>
         <tr>
-          <td>
-            <input type="checkbox" id="<%= rc.deepLinkId %>">
-            <span>
-            <%= val %>
-            </span>
+          <td style="width: 240px;">
+            <input type="checkbox" id="<%= rc.deepLinkId %>" value="<%= val %>"> <%= val %>
           </td>
-          <td>
+          <td style="width: 240px;">
             <input type="text">
           </td>
         </tr>
@@ -2551,8 +2601,8 @@
     </tbody>
     <tfoot>
         <tr>
-          <td class='rounded-foot-left'>&nbsp;</td>
-              <td class='rounded-foot-right'>&nbsp;</td>
+          <td class="rounded-foot-left">&nbsp;</td>
+              <td class="rounded-foot-right">&nbsp;</td>
         </tr>
     </tfoot>
   </table>

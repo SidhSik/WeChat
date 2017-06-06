@@ -152,7 +152,7 @@ var CreativeAssetsMobilePushTemplateView = Backbone.View.extend({
   textAreaClick: true,
   initialize: function(options) {
     _.extend(this,options);
-     console.log("madhu initialize", this); 
+     console.log("madhu initialize", this);
   },
   showError: function(msg) {
     $('.flash_message').show().addClass('redError').html(msg);
@@ -214,23 +214,36 @@ var CreativeAssetsMobilePushTemplateView = Backbone.View.extend({
     },
     showDeepLinks: function(e) {
       console.log("ideep", e);
-      var deepId = $('.deeplinkSelectBox option:selected').attr('id');
-      var that = this;
-      $(e.currentTarget).next().removeClass('hideMe').attr({
+      var tab_value = this.fetchCurrentChannel();
+      var tempContainer = $('#mob_'+tab_value+'_container');
+      var deepId = tempContainer.find('.deeplinkSelectBox option:selected').attr('id');
+      // var that = this;
+      tempContainer.find('.deepLinkBox').removeClass('hideMe').attr({
         id: deepId,
-        value: that.deepLinkObject[deepId].link
+        value: this.deepLinkObject[deepId].link,
+        'hidden-by': ''
       });
-      $('.deepLinkSelectKeys').removeClass('hideMe');
+      tempContainer.find('.deepLinkSelectKeys').removeClass('hideMe').attr({'hidden-by': ''});
+      if(_.size(this.deepLinkObject[deepId].keys) == 0){
+        tempContainer.find('.deepLinkSelectKeys').css({'pointer-events': 'none'});
+      }else{
+        tempContainer.find('.deepLinkSelectKeys').css({'pointer-events': ''});
+      }
+      tempContainer.find('#deepKeyTable').addClass('hideMe').attr({'hidden-by': 'deep-link'});
+      tempContainer.find('.showKeysForSavedDeepLink').addClass('hideMe');
     },
     showDeepLinkKeys: function(e) {
       console.log("ikey", e);
-      $('.deepLinkSelectKeys').addClass('hideMe');
-      var deepId = $('.deeplinkSelectBox option:selected').attr('id');
+      var tab_value = this.fetchCurrentChannel();
+      var tempContainer = $('#mob_'+tab_value+'_container');
+      tempContainer.find('.deepLinkSelectKeys').addClass('hideMe').attr({'hidden-by': 'deep-link'});
+      var deepId = tempContainer.find('.deeplinkSelectBox option:selected').attr('id');
       var deepTable = _.template($('#deepLinkKeyTable').html())({
         deepKeys: this.deepLinkObject[deepId].keys,
         deepLinkId: deepId
       });
       $(e.currentTarget).after(deepTable);
+      tempContainer.find('#deepKeyTable').attr({'hidden-by': ''});
     },
     tagAreaClick: function(e){
        if($(e.currentTarget).hasClass('ca-mobile-push-textarea')){
@@ -626,6 +639,10 @@ var CreativeAssetsMobilePushTemplateView = Backbone.View.extend({
       var container = (tab_value === 'android') ? $("#mob_android_container") : $("#mob_ios_container");
       container.find('.primary-link').removeAttr('checked');
       container.find('#ca-mobile-push-primary').val('');
+      $('.deeplinkSelectBox').addClass('hideMe').attr({'hidden-by': ''});
+      $('.deepLinkSelectKeys').addClass('hideMe').attr({'hidden-by': ''});
+      $('.deepLinkBox').addClass('hideMe').attr({'hidden-by': ''});
+      $('.deepKeyTable').addClass('hideMe').attr({'hidden-by': ''});
     },
     setTitleLink : function(e){
       tab_value = this.fetchCurrentChannel();
@@ -634,11 +651,40 @@ var CreativeAssetsMobilePushTemplateView = Backbone.View.extend({
     },
     showTitleLink : function(e){
       tab_value = this.fetchCurrentChannel();
-      var target_textbox = $(e.currentTarget).parent().parent().next().children();  
-      id = target_textbox.attr("id");
-      link_value = target_textbox.attr(id+"-"+$(e.currentTarget).val()+"-"+tab_value);
-      console.log(link_value);
-      target_textbox.val(link_value);
+      tempContainer = $('#mob_'+tab_value+'_container');
+
+      if(_.isEqual("deep-link",e.currentTarget.value)){
+        $(e.currentTarget).parent().parent().next().children('input#ca-mobile-push-primary').addClass('hideMe');
+        tempContainer.find('.deeplinkSelectBox').removeClass('hideMe').attr({'hidden-by': ''});
+        if(_.isEqual("external-link",tempContainer.find('.deepLinkSelectKeys').attr('hidden-by'))){
+          tempContainer.find('.deepLinkSelectKeys').removeClass('hideMe').attr({'hidden-by': ''});
+        }
+        if(_.isEqual("external-link",tempContainer.find('.deepLinkBox').attr('hidden-by'))){
+          tempContainer.find('.deepLinkBox').removeClass('hideMe').attr({'hidden-by': ''});
+        }
+        if(_.isEqual("external-link",tempContainer.find('#deepKeyTable').attr('hidden-by'))){
+          tempContainer.find('#deepKeyTable').removeClass('hideMe').attr({'hidden-by': ''});
+        }
+      }else if(_.isEqual("external-link",e.currentTarget.value)){
+        tempContainer.find('.showKeysForSavedDeepLink').addClass('hideMe');
+        tempContainer.find('.deeplinkSelectBox').addClass('hideMe').attr({'hidden-by': 'external-link'});
+        if(!_.isEqual("deep-link",tempContainer.find('.deepLinkSelectKeys').attr('hidden-by'))){
+          tempContainer.find('.deepLinkSelectKeys').addClass('hideMe').attr({'hidden-by': 'external-link'});
+        }
+        if(!_.isEqual("deep-link",tempContainer.find('.deepLinkBox').attr('hidden-by'))){
+          tempContainer.find('.deepLinkBox').addClass('hideMe').attr({'hidden-by': 'external-link'});
+        }
+        if(!_.isEqual("deep-link",tempContainer.find('#deepKeyTable').attr('hidden-by'))){
+          tempContainer.find('#deepKeyTable').addClass('hideMe').attr({'hidden-by': 'external-link'});
+        }
+        target_textbox = $(e.currentTarget).parent().parent().next().children('input#ca-mobile-push-primary');
+        $(target_textbox).removeClass('hideMe');
+        id = target_textbox.attr("id");
+        link_value = target_textbox.attr(id+"-"+$(e.currentTarget).val()+"-"+tab_value);
+        console.log(link_value);
+        target_textbox.val(link_value);
+      }else{}
+
     },
     setText : function(e,target_val){
       tab_value = this.fetchCurrentChannel();
@@ -878,15 +924,34 @@ var CreativeAssetsMobilePushTemplateView = Backbone.View.extend({
 
               }
               var cta_type = mob_container.find("input[name=primary-link-"+tab_value+"]:checked").val();
-              if(cta_type == "deep-link")
+              var cta_label,cta_name;
+              if(cta_type == "deep-link"){
                 cta_type_value = "DEEP_LINK";
-               if(cta_type == "external-link")
+                cta_name = mob_container.find('.deeplinkSelectBox option:selected').val();
+                var tempLink = mob_container.find('.deepLinkBox').val();
+                cta_label = tempLink + '?';
+                var table = mob_container.find('#deepKeyTable');
+                if(table.length > 0){
+                  var tableCheckBoxKeys = table.find('input[type="checkbox"]');
+                  var tableTextKeys = table.find('input[type="text"]');
+                  for(i=0; i<tableCheckBoxKeys.length; i++){
+                      if(tableCheckBoxKeys[i].checked){
+                          cta_label += tableCheckBoxKeys[i].value + '=' + tableTextKeys[i].value + '&';
+                      }
+                  }
+                  cta_label = cta_label.substr(0,cta_label.length-1);
+                }
+              }
+              if(cta_type == "external-link"){
                 cta_type_value = "EXTERNAL_URL";
-              var cta_label = mob_container.find("#ca-mobile-push-primary").attr("ca-mobile-push-primary-"+cta_type+"-"+tab_value); 
+                cta_label = mob_container.find("#ca-mobile-push-primary").attr("ca-mobile-push-primary-"+cta_type+"-"+tab_value); 
+                cta_name = cta_type;
+              }
               primaryCTA = {}
               if(!_.isEmpty(cta_label)){
                 primaryCTA['type'] = cta_type_value;
                 primaryCTA['actionLink'] = cta_label;
+                primaryCTA['deepLinkName'] = cta_name;
               }
               var sec_label =mob_container.find(".ca-mobile-push-secondary-label");
               var sec_link = mob_container.find(".ca-mobile-push-secondary");
@@ -1019,21 +1084,80 @@ var CreativeAssetsMobilePushTemplateView = Backbone.View.extend({
    },
    validateCTA :function(container){
      var item = {};
-     item['modelFlag'] = true;   
+     item['modelFlag'] = true;
      var primary_btn=container.find(".primary-link");
-     var primary_link = container.find("#ca-mobile-push-primary")
-     var sec_link ;
-     if(primary_btn.is(':checked') && primary_link.val().length == 0){
-            primary_link.addClass("red-error-border");
-            item['msg'] = "please fill primary CTA";
-            item['modelFlag'] = false;   
+     // var primary_link = container.find("#ca-mobile-push-primary");
+     
+     for(i=0; i<primary_btn.length; i++){
+        if(primary_btn[i].checked){
+          switch(primary_btn[i].value){
+            case 'deep-link':
+                
+                  if(_.isUndefined(container.find('.deeplinkSelectBox option:selected').attr('id'))){
+                          // container.find('.deeplinkSelectBox').addClass("red-error-border");
+                          item['msg'] = "Please choose a valid Deep Link";
+                          item['modelFlag'] = false;
+                  }else{
+                    var table = container.find('#deepKeyTable');
+                    if(table.length !== 0){
+                      switch(table.attr('hidden-by')) {
+                          case 'deep-link':
+                            break;
+                          case '':
+                          case 'external-link':
+                                if(!table.hasClass('hideMe')){
+                                  var tableCheckBoxContainer = table.find('input[type="checkbox"]');
+                                  var tableTextBoxContainer = table.find('input[type="text"]');
+                                  for(j=0; j<tableCheckBoxContainer.length; j++){
+                                      if(tableCheckBoxContainer[j].checked){
+                                          if( _.isEmpty(tableTextBoxContainer[j].value) ){
+                                              item['msg'] = "Please fill value for the selected key(Deep Link)";
+                                              item['modelFlag'] = false;
+                                              break;
+                                          }
+                                      }else{
+                                          if( !_.isEmpty(tableTextBoxContainer[j].value) ){
+                                              item['msg'] = "Please select the checkbox for the key";
+                                              item['modelFlag'] = false;
+                                              break;
+                                          }
+                                      }
+                                  }
+                                }
+                      }
+                    }
+                  }
+                
+              break;
+            case 'external-link':
+                  var primary_link = container.find("#ca-mobile-push-primary");
+                  if(primary_btn[i].checked && primary_link.val().length == 0){
+                          primary_link.addClass("red-error-border");
+                          item['msg'] = "Please fill primary CTA(External Link)";
+                          item['modelFlag'] = false;
+                  }
+                  else if(!primary_btn[i].checked && primary_link.val().length !== 0){
+                          item['msg'] = "Please select primary CTA(External Link)";
+                          item['modelFlag'] = false;   
+                  }else{
+                    primary_link.removeClass("red-error-border");
+                  }
+              break;
+          }
+        }
      }
-     else if(!primary_btn.is(':checked') && primary_link.val().length !== 0){
-            item['msg'] = "please select primary CTA";
-            item['modelFlag'] = false;   
-     }
-     else
-      primary_link.removeClass("red-error-border");
+     // var sec_link ;
+     // if(primary_btn.is(':checked') && primary_link.val().length == 0){
+     //        primary_link.addClass("red-error-border");
+     //        item['msg'] = "please fill primary CTA";
+     //        item['modelFlag'] = false;   
+     // }
+     // else if(!primary_btn.is(':checked') && primary_link.val().length !== 0){
+     //        item['msg'] = "please select primary CTA";
+     //        item['modelFlag'] = false;   
+     // }
+     // else
+     //  primary_link.removeClass("red-error-border");
 
 
      return item;
